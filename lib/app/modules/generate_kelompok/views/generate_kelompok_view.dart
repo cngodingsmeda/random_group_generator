@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:random_group_generator/constants/all_material.dart';
@@ -17,44 +19,27 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
           child: Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Appbar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (controller.currentStep.value > 1) {
-                                controller.setCurrentStep(
-                                    controller.currentStep.value - 1);
-                              } else {
-                                Get.back();
-                              }
-                            },
-                            child: const Text(
-                              "Batal",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: AllMaterial.fontExtraBold,
-                                color: AllMaterial.colorBluePrimary,
-                              ),
-                            ),
-                          ),
-                          Obx(() => Text(
-                                _getTitle(controller.currentStep.value),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: AllMaterial.fontExtraBold,
-                                  color: AllMaterial.colorBlackPrimary,
-                                ),
-                              )),
-                          Opacity(
-                            opacity: 0,
-                            child: GestureDetector(
-                              onTap: () {},
+                child: Obx(
+                  () => SingleChildScrollView(
+                    physics: (controller.checkboxValue.isTrue)
+                        ? const NeverScrollableScrollPhysics()
+                        : const ScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Appbar
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (controller.currentStep.value > 1) {
+                                  controller.setCurrentStep(
+                                      controller.currentStep.value - 1);
+                                } else {
+                                  Get.back();
+                                }
+                              },
                               child: const Text(
                                 "Batal",
                                 style: TextStyle(
@@ -64,108 +49,203 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                            Obx(() => Text(
+                                  _getTitle(controller.currentStep.value),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: AllMaterial.fontExtraBold,
+                                    color: AllMaterial.colorBlackPrimary,
+                                  ),
+                                )),
+                            Opacity(
+                              opacity: 0,
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: const Text(
+                                  "Batal",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: AllMaterial.fontExtraBold,
+                                    color: AllMaterial.colorBluePrimary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
 
-                      // Stepper
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 5),
-                        width: Get.width,
-                        child: Obx(() {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              StepperWidget(
-                                number: "1",
-                                titleText: "Pilih Kelas",
-                                isActive: controller.currentStep.value >= 1,
-                                isCompleted: controller.currentStep.value > 1,
-                              ),
-                              StepperWidget(
-                                number: "2",
-                                titleText: "Filter",
-                                isActive: controller.currentStep.value >= 2,
-                                isCompleted: controller.currentStep.value > 2,
-                              ),
-                              StepperWidget(
-                                number: "3",
-                                titleText: "Generate",
-                                isActive: controller.currentStep.value >= 3,
-                                isCompleted: controller.currentStep.value > 3,
-                              ),
-                              StepperWidget(
-                                number: "4",
-                                titleText: "Review",
-                                isActive: controller.currentStep.value >= 4,
-                                isCompleted: controller.currentStep.value > 4,
-                              ),
-                            ],
-                          );
-                        }),
-                      ),
+                        // Stepper
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 5),
+                          width: Get.width,
+                          child: Obx(() {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                StepperWidget(
+                                  number: "1",
+                                  titleText: "Pilih Kelas",
+                                  isActive: controller.currentStep.value >= 1,
+                                  isCompleted: controller.currentStep.value > 1,
+                                ),
+                                StepperWidget(
+                                  number: "2",
+                                  titleText: "Filter",
+                                  isActive: controller.currentStep.value >= 2,
+                                  isCompleted: controller.currentStep.value > 2,
+                                ),
+                                StepperWidget(
+                                  number: "3",
+                                  titleText: "Generate",
+                                  isActive: controller.currentStep.value >= 3,
+                                  isCompleted: controller.currentStep.value > 3,
+                                ),
+                                StepperWidget(
+                                  number: "4",
+                                  titleText: "Review",
+                                  isActive: controller.currentStep.value >= 4,
+                                  isCompleted: controller.currentStep.value > 4,
+                                ),
+                              ],
+                            );
+                          }),
+                        ),
 
-                      // Text & Title
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        child: Obx(
-                          () => Text(
-                            _getSubTitle(controller.currentStep.value),
-                            style: const TextStyle(
-                              color: AllMaterial.colorBlackPrimary,
-                              fontSize: 16,
-                              fontWeight: AllMaterial.fontBlack,
+                        // Text & Title
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          child: Obx(
+                            () => Text(
+                              _getSubTitle(controller.currentStep.value),
+                              style: const TextStyle(
+                                color: AllMaterial.colorBlackPrimary,
+                                fontSize: 16,
+                                fontWeight: AllMaterial.fontBlack,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Obx(
-                        () => Text(
-                          _getTitleSub(controller.currentStep.value),
-                          style: const TextStyle(
-                            color: AllMaterial.colorGreyPrimary,
+                        Obx(
+                          () => Text(
+                            _getTitleSub(controller.currentStep.value),
+                            style: const TextStyle(
+                              color: AllMaterial.colorGreyPrimary,
+                            ),
                           ),
                         ),
-                      ),
 
-                      // TextField Title & Pilih Kelas
-                      Obx(
-                        () => _getPageWidget(controller.currentStep.value),
-                      ),
-                    ],
+                        Obx(() => _getPageWidget(controller.currentStep.value)),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              Container(
-                width: Get.width,
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(12),
+              Obx(
+                () => (controller.currentStep.value != 2)
+                    ? Container(
+                        width: Get.width,
+                        alignment: Alignment.bottomCenter,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(12),
+                              ),
+                            ),
+                            fixedSize: Size(Get.width, 48),
+                            backgroundColor: AllMaterial.colorBluePrimary,
+                          ),
+                          onPressed: () {
+                            if (controller.currentStep.value < 4) {
+                              controller.setCurrentStep(
+                                controller.currentStep.value + 1,
+                              );
+                            } else {}
+                          },
+                          child: const Text(
+                            "Lanjutkan",
+                            style: TextStyle(
+                              color: AllMaterial.colorWhite,
+                              fontWeight: AllMaterial.fontSemiBold,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: Get.width,
+                        height: controller.checkboxValue.isFalse
+                            ? Get.height * 0.17
+                            : Get.height * 0.63,
+                        color: const Color.fromARGB(11, 255, 255, 255),
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Obx(
+                              () => CheckboxListTile(
+                                checkColor: AllMaterial.colorWhite,
+                                fillColor: (controller.checkboxValue.isTrue)
+                                    ? const WidgetStatePropertyAll(
+                                        AllMaterial.colorBluePrimary)
+                                    : const WidgetStatePropertyAll(
+                                        AllMaterial.colorWhite,
+                                      ),
+                                value: controller.checkboxValue.value,
+                                onChanged: (value) {
+                                  controller.checkboxValue.value = value!;
+                                  if (!value) {
+                                    // controller.resetFilters();
+                                  }
+                                },
+                                title: const Text(
+                                  "Gunakan filter default",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AllMaterial.colorBlackPrimary,
+                                    fontWeight: AllMaterial.fontMedium,
+                                  ),
+                                ),
+                                subtitle: const Text(
+                                  "(matikan ceklis untuk mengatur filter)",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AllMaterial.colorGreyPrimary,
+                                  ),
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12),
+                                  ),
+                                ),
+                                fixedSize: Size(Get.width, 48),
+                                backgroundColor: AllMaterial.colorBluePrimary,
+                              ),
+                              onPressed: () {
+                                if (controller.currentStep.value < 4) {
+                                  controller.setCurrentStep(
+                                    controller.currentStep.value + 1,
+                                  );
+                                } else {}
+                              },
+                              child: const Text(
+                                "Lanjutkan",
+                                style: TextStyle(
+                                  color: AllMaterial.colorWhite,
+                                  fontWeight: AllMaterial.fontSemiBold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    fixedSize: Size(Get.width, 48),
-                    backgroundColor: AllMaterial.colorBluePrimary,
-                  ),
-                  onPressed: () {
-                    if (controller.currentStep.value < 4) {
-                      controller.setCurrentStep(
-                        controller.currentStep.value + 1,
-                      );
-                    } else {}
-                  },
-                  child: const Text(
-                    "Lanjutkan",
-                    style: TextStyle(
-                      color: AllMaterial.colorWhite,
-                      fontWeight: AllMaterial.fontSemiBold,
-                    ),
-                  ),
-                ),
-              )
+              ),
             ],
           ),
         ),
@@ -223,7 +303,9 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
       case 1:
         return PilihKelas(controller: controller);
       case 2:
-        return const FilterPage();
+        return FilterPage(controller: controller);
+      case 3:
+        return GeneratePage(controller: controller);
       default:
         return const Center(
           child: Text("Gheral Ganteng"),
@@ -233,7 +315,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
 }
 
 class FilterPage extends StatelessWidget {
-  const FilterPage({super.key});
+  final GenerateKelompokController controller;
+  const FilterPage({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -248,10 +331,219 @@ class FilterPage extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Tentukan Ketua
+          // Tentukan Agama
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  controller.toggleFilterAgama();
+                },
+                child: Obx(
+                  () => Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: controller.filterAgamaActive.value
+                              ? AllMaterial.colorBluePrimary
+                              : AllMaterial.colorGreySec,
+                        ),
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: controller.filterAgamaActive.value
+                                ? AllMaterial.colorWhite
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Filter Berdasarkan Agama",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: AllMaterial.fontBold,
+                              color: AllMaterial.colorGreyPrimary,
+                            ),
+                          ),
+                          Text(
+                            "(untuk kebutuhan Kelompok Agama)",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AllMaterial.colorGreySec,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              Obx(() {
+                return Wrap(
+                  spacing: 10.0,
+                  children: controller.agamaSiswa.map((String agama) {
+                    return ChoiceChip(
+                      checkmarkColor: AllMaterial.colorWhite,
+                      label: Text(
+                        agama,
+                        style: TextStyle(
+                          color: controller.filterAgamaActive.value
+                              ? AllMaterial.colorWhite
+                              : AllMaterial.colorGreyPrimary,
+                        ),
+                      ),
+                      elevation: 0,
+                      side: const BorderSide(
+                        width: 0,
+                        color: Colors.transparent,
+                      ),
+                      selected: controller.selectedAgamaFilter.value == agama,
+                      onSelected: controller.filterAgamaActive.value
+                          ? (bool selected) {
+                              controller.toggleAgama(agama);
+                            }
+                          : null,
+                      selectedColor: AllMaterial.colorBluePrimary,
+                      disabledColor: AllMaterial.colorWhite,
+                      backgroundColor: AllMaterial.colorBlueSec,
+                    );
+                  }).toList(),
+                );
+              }),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Tentukan Jenis Kelamin
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  controller.toggleFilterJK();
+                },
+                child: Obx(
+                  () => Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: controller.filterJKActive.value
+                              ? AllMaterial.colorBluePrimary
+                              : AllMaterial.colorGreySec,
+                        ),
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: controller.filterJKActive.value
+                                ? AllMaterial.colorWhite
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Filter Berdasarkan Jenis Kelamin",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: AllMaterial.fontBold,
+                              color: AllMaterial.colorGreyPrimary,
+                            ),
+                          ),
+                          Text(
+                            "(jika tidak dipilih, nilai default acak)",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AllMaterial.colorGreySec,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              GestureDetector(
+                onTap: () {
+                  controller.toggleJK("Laki-Laki");
+                },
+                child: Obx(() => Container(
+                      padding: const EdgeInsets.all(16),
+                      alignment: Alignment.centerLeft,
+                      width: Get.width,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xffD4D6DD),
+                          width:
+                              controller.jKSiswa.value == "Laki-Laki" ? 0 : .5,
+                        ),
+                        color: controller.jKSiswa.value == "Laki-Laki"
+                            ? AllMaterial.colorWhiteBlue
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        "Laki-Laki",
+                        style: TextStyle(
+                          color: AllMaterial.colorBlackPrimary,
+                        ),
+                      ),
+                    )),
+              ),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () {
+                  controller.toggleJK("Perempuan");
+                },
+                child: Obx(
+                  () => Container(
+                    padding: const EdgeInsets.all(16),
+                    alignment: Alignment.centerLeft,
+                    width: Get.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0xffD4D6DD),
+                        width: controller.jKSiswa.value == "Perempuan" ? 0 : .5,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: controller.jKSiswa.value == "Perempuan"
+                          ? AllMaterial.colorWhiteBlue
+                          : Colors.white,
+                    ),
+                    child: const Text(
+                      "Perempuan",
+                      style: TextStyle(
+                        color: AllMaterial.colorBlackPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -405,6 +697,104 @@ class StepperWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class GeneratePage extends StatelessWidget {
+  final GenerateKelompokController controller;
+  const GeneratePage({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      width: Get.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xffD4D6DD),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Jumlah Kelompok
+          const Text(
+            "Jumlah Kelompok ",
+            style: TextStyle(
+              fontSize: 13,
+              color: AllMaterial.colorGreyPrimary,
+              fontWeight: AllMaterial.fontBold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            keyboardType: TextInputType.number,
+            controller: controller.jumlahKelompok,
+            onTapOutside: (_) {
+              controller.focusNodeJ.unfocus();
+            },
+            focusNode: controller.focusNodeJ,
+            cursorColor: AllMaterial.colorBluePrimary,
+            decoration: const InputDecoration(
+              hintText: "6",
+              contentPadding: EdgeInsets.symmetric(horizontal: 15),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: AllMaterial.colorGreySec,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(
+                  color: AllMaterial.colorBluePrimary,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 25),
+
+          // Jumlah Anggota Kelompok
+          const Text(
+            "Jumlah Anggota Kelompok",
+            style: TextStyle(
+              fontSize: 13,
+              color: AllMaterial.colorGreyPrimary,
+              fontWeight: AllMaterial.fontBold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            keyboardType: TextInputType.number,
+            controller: controller.jumlahAnggotaKelompok,
+            onTapOutside: (_) {
+              controller.focusNodeA.unfocus();
+            },
+            focusNode: controller.focusNodeA,
+            cursorColor: AllMaterial.colorBluePrimary,
+            decoration: const InputDecoration(
+              hintText: "8",
+              contentPadding: EdgeInsets.symmetric(horizontal: 15),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: AllMaterial.colorGreySec,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(
+                  color: AllMaterial.colorBluePrimary,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

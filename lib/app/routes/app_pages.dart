@@ -22,7 +22,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.GENERATE_KELOMPOK,
-      page: () => const GenerateKelompokView(),
+      page: () => GenerateKelompokView(),
       binding: GenerateKelompokBinding(),
     ),
   ];

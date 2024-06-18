@@ -13,7 +13,7 @@ void main() {
         primaryColorLight: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      title: "Application",
+      title: "Generate Kelompok",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     ),

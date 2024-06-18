@@ -101,7 +101,7 @@ class HomeView extends GetView<HomeController> {
         backgroundColor: AllMaterial.colorBluePrimary,
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const GenerateKelompokView(),
+            builder: (context) => GenerateKelompokView(),
           ));
         },
         child: const Icon(
