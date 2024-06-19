@@ -17,12 +17,12 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.HOME,
-      page: () => HomeView(),
+      page: () => const HomeView(),
       binding: HomeBinding(),
     ),
     GetPage(
       name: _Paths.GENERATE_KELOMPOK,
-      page: () => GenerateKelompokView(),
+      page: () => const GenerateKelompokView(),
       binding: GenerateKelompokBinding(),
     ),
   ];

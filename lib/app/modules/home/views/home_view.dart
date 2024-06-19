@@ -1,98 +1,125 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
 import 'package:random_group_generator/app/modules/generate_kelompok/views/generate_kelompok_view.dart';
+import 'package:random_group_generator/app/modules/home/controllers/home_controller.dart';
+import 'package:random_group_generator/app/modules/review/review_kelompok.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 
-import '../controllers/home_controller.dart';
-
 class HomeView extends GetView<HomeController> {
-  var histori = [];
-  HomeView({super.key});
+  const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(GenerateKelompokController());
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Buat kelompok Anda!",
-                    style: TextStyle(
-                      color: AllMaterial.colorBlackPrimary,
-                      fontSize: 24,
-                      fontWeight: AllMaterial.fontBlack,
-                    ),
-                  ),
-                  Text(
-                    "Auto-Generate untuk kebutuhan-mu",
-                    style: TextStyle(
-                      color: AllMaterial.colorGreyPrimary,
-                      fontSize: 16,
-                      fontWeight: AllMaterial.fontRegular,
-                    ),
-                  ),
-                ],
-              ),
-
-              // SizedBox(height: 34),
-
-              // Histori
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 34,
-                ),
-                child: Column(
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Histori",
+                    Text(
+                      "Buat kelompok Anda!",
                       style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: AllMaterial.fontExtraBold,
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: (histori.isEmpty)
-                            ? const Text(
-                                "Belum ada histori",
-                                style: TextStyle(
-                                  color: AllMaterial.colorGreyPrimary,
-                                  fontWeight: AllMaterial.fontRegular,
-                                ),
-                              )
-                            : Container(
-                                margin: const EdgeInsets.only(top: 14),
-                                width: Get.width,
-                                height: 180,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: const Color(0xffD4D6DD),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: const Column(),
-                              ),
+                    Text(
+                      "Auto-Generate untuk kebutuhan-mu",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+
+                // Histori
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 34,
+                  ),
+                  child: Obx(() {
+                    if (controller.histori.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "Belum ada histori",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Column(
+                        children: controller.histori.reversed.map((item) {
+                          return Container(
+                            margin: const EdgeInsets.only(top: 14),
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xffD4D6DD),
+                                width: 1,
+                              ),
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                Get.to(() => ReviewKelompokView(title: item['title'], kelas: item['kelas'], kelompok: item['kelompok']));
+                              },
+                              child: ListTile(
+                                trailing: const Icon(
+                                  Icons.keyboard_arrow_right_rounded,
+                                  color: AllMaterial.colorGreyPrimary,
+                                ),
+                                leading: const CircleAvatar(
+                                  backgroundColor: AllMaterial.colorGreySec,
+                                  child: Image(
+                                    image: AssetImage(
+                                      "assets/images/check.png",
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  "${item['title']}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: AllMaterial.colorBlackPrimary,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  "${item['kelas']}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AllMaterial.colorGreyPrimary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -100,8 +127,9 @@ class HomeView extends GetView<HomeController> {
         elevation: 2,
         backgroundColor: AllMaterial.colorBluePrimary,
         onPressed: () {
+          controller.resetState();
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => GenerateKelompokView(),
+            builder: (context) => const GenerateKelompokView(),
           ));
         },
         child: const Icon(

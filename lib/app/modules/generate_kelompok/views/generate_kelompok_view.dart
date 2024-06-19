@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 import '../controllers/generate_kelompok_controller.dart';
+import 'package:share_plus/share_plus.dart';
 
 class GenerateKelompokView extends GetView<GenerateKelompokController> {
   const GenerateKelompokView({super.key});
@@ -31,21 +32,34 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                if (controller.currentStep.value > 1) {
-                                  controller.setCurrentStep(
-                                      controller.currentStep.value - 1);
-                                } else {
-                                  Get.back();
-                                }
-                              },
-                              child: const Text(
-                                "Batal",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: AllMaterial.fontExtraBold,
-                                  color: AllMaterial.colorBluePrimary,
+                            Opacity(
+                              opacity:
+                                  (controller.currentStep.value != 4) ? 1 : 0,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () {
+                                  if (controller.currentStep.value != 4) {
+                                    if (controller.currentStep.value > 1) {
+                                      controller.setCurrentStep(
+                                          controller.currentStep.value - 1);
+                                    } else {
+                                      Get.back();
+                                      GenerateKelompokController().dispose();
+                                    }
+                                  } else {
+                                    null;
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    "Batal",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: AllMaterial.fontExtraBold,
+                                      color: AllMaterial.colorBluePrimary,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -57,16 +71,35 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     color: AllMaterial.colorBlackPrimary,
                                   ),
                                 )),
-                            Opacity(
-                              opacity: 0,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: const Text(
-                                  "Batal",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: AllMaterial.fontExtraBold,
-                                    color: AllMaterial.colorBluePrimary,
+                            Obx(
+                              () => Opacity(
+                                opacity:
+                                    (controller.currentStep.value == 4) ? 1 : 0,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(15),
+                                  onTap: () async {
+                                    String whatsappMessage =
+                                        generateWhatsappMessage();
+                                    final result =
+                                        await Share.share(whatsappMessage);
+                                    if (result.status ==
+                                        ShareResultStatus.success) {
+                                      print('Berhasil berbagi pesan WhatsApp!');
+                                      // Menyimpan ke data title dan kelas ke dalam variabel histori, ketika ditekan akan mengarahkan ke page review tanpa tombol batal yang dapat diakses kapan saja
+                                    } else {
+                                      print('Gagal berbagi pesan WhatsApp.');
+                                    }
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text(
+                                      "Share",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: AllMaterial.fontExtraBold,
+                                        color: AllMaterial.colorBluePrimary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -142,109 +175,230 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                 ),
               ),
               Obx(
-                () => (controller.currentStep.value != 2)
-                    ? Container(
-                        width: Get.width,
-                        alignment: Alignment.bottomCenter,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(12),
-                              ),
-                            ),
-                            fixedSize: Size(Get.width, 48),
-                            backgroundColor: AllMaterial.colorBluePrimary,
-                          ),
-                          onPressed: () {
-                            if (controller.currentStep.value < 4) {
-                              controller.setCurrentStep(
-                                controller.currentStep.value + 1,
-                              );
-                            } else {}
-                          },
-                          child: const Text(
-                            "Lanjutkan",
-                            style: TextStyle(
-                              color: AllMaterial.colorWhite,
-                              fontWeight: AllMaterial.fontSemiBold,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(
-                        width: Get.width,
-                        height: controller.checkboxValue.isFalse
-                            ? Get.height * 0.17
-                            : Get.height * 0.63,
-                        color: const Color.fromARGB(11, 255, 255, 255),
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Obx(
-                              () => CheckboxListTile(
-                                checkColor: AllMaterial.colorWhite,
-                                fillColor: (controller.checkboxValue.isTrue)
-                                    ? const WidgetStatePropertyAll(
-                                        AllMaterial.colorBluePrimary)
-                                    : const WidgetStatePropertyAll(
-                                        AllMaterial.colorWhite,
-                                      ),
-                                value: controller.checkboxValue.value,
-                                onChanged: (value) {
-                                  controller.checkboxValue.value = value!;
-                                  if (!value) {
-                                    // controller.resetFilters();
-                                  }
-                                },
-                                title: const Text(
-                                  "Gunakan filter default",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AllMaterial.colorBlackPrimary,
-                                    fontWeight: AllMaterial.fontMedium,
-                                  ),
-                                ),
-                                subtitle: const Text(
-                                  "(matikan ceklis untuk mengatur filter)",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: AllMaterial.colorGreyPrimary,
-                                  ),
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                              ),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(12),
-                                  ),
-                                ),
-                                fixedSize: Size(Get.width, 48),
-                                backgroundColor: AllMaterial.colorBluePrimary,
-                              ),
-                              onPressed: () {
-                                if (controller.currentStep.value < 4) {
-                                  controller.setCurrentStep(
-                                    controller.currentStep.value + 1,
-                                  );
-                                } else {}
+                () {
+                  if (controller.currentStep.value == 2) {
+                    return Container(
+                      width: Get.width,
+                      height: controller.checkboxValue.isFalse
+                          ? Get.height * 0.17
+                          : Get.height * 0.63,
+                      color: const Color.fromARGB(11, 255, 255, 255),
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Obx(
+                            () => CheckboxListTile(
+                              checkColor: AllMaterial.colorWhite,
+                              fillColor: (controller.checkboxValue.isTrue)
+                                  ? const WidgetStatePropertyAll(
+                                      AllMaterial.colorBluePrimary)
+                                  : const WidgetStatePropertyAll(
+                                      AllMaterial.colorWhite,
+                                    ),
+                              value: controller.checkboxValue.value,
+                              onChanged: (value) {
+                                controller.checkboxValue.value = value!;
                               },
-                              child: const Text(
-                                "Lanjutkan",
+                              title: const Text(
+                                "Gunakan filter default",
                                 style: TextStyle(
-                                  color: AllMaterial.colorWhite,
-                                  fontWeight: AllMaterial.fontSemiBold,
+                                  fontSize: 16,
+                                  color: AllMaterial.colorBlackPrimary,
+                                  fontWeight: AllMaterial.fontMedium,
                                 ),
                               ),
+                              subtitle: const Text(
+                                "(matikan ceklis untuk mengatur filter)",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AllMaterial.colorGreyPrimary,
+                                ),
+                              ),
+                              controlAffinity: ListTileControlAffinity.leading,
                             ),
-                          ],
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(12),
+                                ),
+                              ),
+                              fixedSize: Size(Get.width, 48),
+                              backgroundColor: AllMaterial.colorBluePrimary,
+                            ),
+                            onPressed: () {
+                              if (controller.currentStep.value < 4) {
+                                controller.setCurrentStep(
+                                  controller.currentStep.value + 1,
+                                );
+                                controller.jumlahSiswa();
+                              }
+                            },
+                            child: const Text(
+                              "Lanjutkan",
+                              style: TextStyle(
+                                color: AllMaterial.colorWhite,
+                                fontWeight: AllMaterial.fontSemiBold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (controller.currentStep.value == 3) {
+                    return Container(
+                      width: Get.width,
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Banyak Siswa",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: AllMaterial.colorGreyPrimary,
+                                ),
+                              ),
+                              Text(
+                                "${controller.jumlahSiswaTerpilih.length}",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: AllMaterial.fontBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(12),
+                                ),
+                              ),
+                              fixedSize: Size(Get.width, 48),
+                              backgroundColor: AllMaterial.colorBluePrimary,
+                            ),
+                            onPressed: () {
+                              if (controller.currentStep.value < 4) {
+                                controller.setCurrentStep(
+                                  controller.currentStep.value + 1,
+                                );
+                                controller.setJumlahKelompok();
+                                controller.setJumlahAnggotaKelompok();
+                                controller.generateKelompok();
+                              }
+                            },
+                            child: const Text(
+                              "Lanjutkan",
+                              style: TextStyle(
+                                color: AllMaterial.colorWhite,
+                                fontWeight: AllMaterial.fontSemiBold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (controller.currentStep.value == 4) {
+                    return Container(
+                      width: Get.width,
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          fixedSize: Size(Get.width, 48),
+                          backgroundColor: AllMaterial.colorBluePrimary,
+                        ),
+                        onPressed: () {
+                          controller.addToHistory(
+                            controller.titleKelompok.value,
+                            controller.selectedKelas.value,
+                            controller.kelompokList,
+                          );
+                        },
+                        child: const Text(
+                          "Kembali Ke Beranda",
+                          style: TextStyle(
+                            color: AllMaterial.colorWhite,
+                            fontWeight: AllMaterial.fontSemiBold,
+                          ),
                         ),
                       ),
+                    );
+                  } else {
+                    return Container(
+                      width: Get.width,
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          fixedSize: Size(Get.width, 48),
+                          backgroundColor: AllMaterial.colorBluePrimary,
+                        ),
+                        onPressed: () {
+                          if (controller.currentStep.value < 4 &&
+                              controller.selectedKelas.value != "") {
+                            controller.setCurrentStep(
+                              controller.currentStep.value + 1,
+                            );
+                            controller.setTitle();
+                          } else {
+                            Get.bottomSheet(BottomSheet(
+                              onClosing: () {},
+                              builder: (context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: AllMaterial.colorWhite,
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  width: Get.width,
+                                  height: 120,
+                                  padding: const EdgeInsets.all(20),
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Kesalahan!",
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: AllMaterial.fontBold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text("Harap Pilih Kelas Anda!"),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ));
+                          }
+                        },
+                        child: const Text(
+                          "Lanjutkan",
+                          style: TextStyle(
+                            color: AllMaterial.colorWhite,
+                            fontWeight: AllMaterial.fontSemiBold,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -306,11 +460,102 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
         return FilterPage(controller: controller);
       case 3:
         return GeneratePage(controller: controller);
+      case 4:
+        return ReviewPage(controller: controller);
       default:
         return const Center(
           child: Text("Gheral Ganteng"),
         );
     }
+  }
+
+  String generateWhatsappMessage() {
+    String message =
+        "${controller.titleKelompok.value} ${controller.selectedKelas.value}\n\n";
+    for (int i = 0; i < controller.kelompokList.length; i++) {
+      message += "Kelompok ${i + 1}:\n";
+      var group = controller.kelompokList[i];
+      for (var siswa in group) {
+        message += "${siswa["nama"]}\n";
+      }
+      message += "\n";
+    }
+    return Uri.encodeComponent(message);
+  }
+}
+
+class ReviewPage extends StatelessWidget {
+  final GenerateKelompokController controller;
+
+  const ReviewPage({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    print("Kelompok List: ${controller.kelompokList}");
+    print("Panjang Kelompok List: ${controller.kelompokList.length}");
+
+    return Container(
+      margin: const EdgeInsets.all(14),
+      padding: const EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 30),
+      width: Get.width,
+      height: Get.height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xffD4D6DD),
+          width: 1,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                '${controller.titleKelompok.value} ${controller.selectedKelas.value}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (controller.kelompokList.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(
+                  controller.kelompokList.length,
+                  (index) {
+                    var group = controller.kelompokList[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Kelompok ${index + 1}:',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ...group.map(
+                          (siswa) => Text(
+                            '${siswa["nama"]}',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            SizedBox(height: Get.height * 0.45),
+          ],
+        ),
+      ),
+    );
   }
 }
 

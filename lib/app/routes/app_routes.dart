@@ -7,10 +7,12 @@ abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
   static const GENERATE_KELOMPOK = _Paths.GENERATE_KELOMPOK;
+  static const REVIEW_KELOMPOK = _Paths.REVIEW_KELOMPOK;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
   static const GENERATE_KELOMPOK = '/generate-kelompok';
+  static const REVIEW_KELOMPOK = '/review-kelompok';
 }
