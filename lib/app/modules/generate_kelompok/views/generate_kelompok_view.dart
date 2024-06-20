@@ -29,83 +29,112 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Appbar
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Opacity(
-                              opacity:
-                                  (controller.currentStep.value != 4) ? 1 : 0,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(15),
-                                onTap: () {
-                                  if (controller.currentStep.value != 4) {
-                                    if (controller.currentStep.value > 1) {
-                                      controller.setCurrentStep(
-                                          controller.currentStep.value - 1);
-                                    } else {
-                                      Get.back();
-                                      GenerateKelompokController().dispose();
-                                    }
-                                  } else {
-                                    null;
-                                  }
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    "Batal",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: AllMaterial.fontExtraBold,
-                                      color: AllMaterial.colorBluePrimary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Obx(() => Text(
-                                  _getTitle(controller.currentStep.value),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: AllMaterial.fontExtraBold,
-                                    color: AllMaterial.colorBlackPrimary,
-                                  ),
-                                )),
-                            Obx(
-                              () => Opacity(
-                                opacity:
-                                    (controller.currentStep.value == 4) ? 1 : 0,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(15),
-                                  onTap: () async {
-                                    String whatsappMessage =
-                                        generateWhatsappMessage();
-                                    final result =
-                                        await Share.share(whatsappMessage);
-                                    if (result.status ==
-                                        ShareResultStatus.success) {
-                                      print('Berhasil berbagi pesan WhatsApp!');
-                                      // Menyimpan ke data title dan kelas ke dalam variabel histori, ketika ditekan akan mengarahkan ke page review tanpa tombol batal yang dapat diakses kapan saja
-                                    } else {
-                                      print('Gagal berbagi pesan WhatsApp.');
-                                    }
-                                  },
-                                  child: const Padding(
+                        (controller.currentStep.value == 1)
+                            ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Text(
-                                      "Share",
+                                      "Pilih Kelas",
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 16,
                                         fontWeight: AllMaterial.fontExtraBold,
-                                        color: AllMaterial.colorBluePrimary,
+                                        color: AllMaterial.colorBlackPrimary,
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  (controller.currentStep.value == 1)
+                                      ? const SizedBox.shrink()
+                                      : Opacity(
+                                          opacity:
+                                              (controller.currentStep.value !=
+                                                      4)
+                                                  ? 1
+                                                  : 0,
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            onTap: () {
+                                              if (controller
+                                                      .currentStep.value !=
+                                                  4) {
+                                                if (controller
+                                                        .currentStep.value >
+                                                    1) {
+                                                  controller.setCurrentStep(
+                                                      controller.currentStep
+                                                              .value -
+                                                          1);
+                                                } else {
+                                                  Get.back();
+                                                  GenerateKelompokController()
+                                                      .dispose();
+                                                }
+                                              } else {
+                                                null;
+                                              }
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(8),
+                                              child: Text(
+                                                "Batal",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      AllMaterial.fontExtraBold,
+                                                  color: AllMaterial
+                                                      .colorBluePrimary,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                  Obx(() => Text(
+                                        _getTitle(controller.currentStep.value),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: AllMaterial.fontExtraBold,
+                                          color: AllMaterial.colorBlackPrimary,
+                                        ),
+                                      )),
+                                  Obx(
+                                    () => Opacity(
+                                      opacity:
+                                          (controller.currentStep.value == 4)
+                                              ? 1
+                                              : 0,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(15),
+                                        onTap: () async {
+                                          String whatsappMessage =
+                                              generateWhatsappMessage();
+                                          await Share.share(whatsappMessage);
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Text(
+                                            "Share",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight:
+                                                  AllMaterial.fontExtraBold,
+                                              color:
+                                                  AllMaterial.colorBluePrimary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
 
                         // Stepper
                         Container(
@@ -480,7 +509,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
       }
       message += "\n";
     }
-    return Uri.encodeComponent(message);
+    return message;
   }
 }
 
@@ -582,7 +611,8 @@ class FilterPage extends StatelessWidget {
           // Tentukan Agama
           Column(
             children: [
-              GestureDetector(
+              InkWell(
+                borderRadius: BorderRadius.circular(15),
                 onTap: () {
                   controller.toggleFilterAgama();
                 },
@@ -675,7 +705,8 @@ class FilterPage extends StatelessWidget {
           // Tentukan Jenis Kelamin
           Column(
             children: [
-              GestureDetector(
+              InkWell(
+                borderRadius: BorderRadius.circular(15),
                 onTap: () {
                   controller.toggleFilterJK();
                 },
@@ -729,64 +760,139 @@ class FilterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              GestureDetector(
-                onTap: () {
-                  controller.toggleJK("Laki-Laki");
-                },
-                child: Obx(() => Container(
-                      padding: const EdgeInsets.all(16),
-                      alignment: Alignment.centerLeft,
-                      width: Get.width,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xffD4D6DD),
-                          width:
-                              controller.jKSiswa.value == "Laki-Laki" ? 0 : .5,
-                        ),
-                        color: controller.jKSiswa.value == "Laki-Laki"
-                            ? AllMaterial.colorWhiteBlue
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        "Laki-Laki",
-                        style: TextStyle(
-                          color: AllMaterial.colorBlackPrimary,
-                        ),
-                      ),
-                    )),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  controller.toggleJK("Perempuan");
-                },
-                child: Obx(
-                  () => Container(
-                    padding: const EdgeInsets.all(16),
-                    alignment: Alignment.centerLeft,
-                    width: Get.width,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xffD4D6DD),
-                        width: controller.jKSiswa.value == "Perempuan" ? 0 : .5,
-                      ),
+              (controller.filterJKActive.isTrue)
+                  ? InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      color: controller.jKSiswa.value == "Perempuan"
-                          ? AllMaterial.colorWhiteBlue
-                          : Colors.white,
-                    ),
-                    child: const Text(
-                      "Perempuan",
-                      style: TextStyle(
-                        color: AllMaterial.colorBlackPrimary,
+                      onTap: () {
+                        controller.toggleJK("Laki-Laki");
+                      },
+                      child: Obx(
+                        () => Container(
+                          padding: const EdgeInsets.all(16),
+                          alignment: Alignment.centerLeft,
+                          width: Get.width,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xffD4D6DD),
+                              width: controller.jKSiswa.value == "Laki-Laki" &&
+                                      controller.filterJKActive.isTrue
+                                  ? 0
+                                  : .5,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            color: controller.jKSiswa.value == "Laki-Laki" &&
+                                    controller.filterJKActive.isTrue
+                                ? AllMaterial.colorBluePrimary
+                                : const Color.fromARGB(255, 239, 239, 241),
+                          ),
+                          child: Text(
+                            "Laki-Laki",
+                            style: TextStyle(
+                              color: controller.jKSiswa.value == "Laki-Laki" &&
+                                      controller.filterJKActive.isTrue
+                                  ? AllMaterial.colorWhite
+                                  : AllMaterial.colorBlackPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Obx(
+                      () => Container(
+                        padding: const EdgeInsets.all(16),
+                        alignment: Alignment.centerLeft,
+                        width: Get.width,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xffD4D6DD),
+                            width: controller.jKSiswa.value == "Laki-Laki"
+                                ? 0
+                                : .5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          color: controller.jKSiswa.value == "Laki-Laki"
+                              ? AllMaterial.colorWhiteBlue
+                              : Colors.white,
+                        ),
+                        child: Text(
+                          "Laki-Laki",
+                          style: TextStyle(
+                            color: controller.jKSiswa.value == "Laki-Laki"
+                                ? AllMaterial.colorWhite
+                                : AllMaterial.colorBlackPrimary,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 8),
+              (controller.filterJKActive.isTrue)
+                  ? InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        controller.toggleJK("Perempuan");
+                      },
+                      child: Obx(
+                        () => Container(
+                          padding: const EdgeInsets.all(16),
+                          alignment: Alignment.centerLeft,
+                          width: Get.width,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xffD4D6DD),
+                              width: controller.jKSiswa.value == "Perempuan" &&
+                                      controller.filterJKActive.isTrue
+                                  ? 0
+                                  : .5,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            color: controller.jKSiswa.value == "Perempuan" &&
+                                    controller.filterJKActive.isTrue
+                                ? AllMaterial.colorBluePrimary
+                                : const Color.fromARGB(255, 239, 239, 241),
+                          ),
+                          child: Text(
+                            "Perempuan",
+                            style: TextStyle(
+                              color: controller.jKSiswa.value == "Perempuan" &&
+                                      controller.filterJKActive.isTrue
+                                  ? AllMaterial.colorWhite
+                                  : AllMaterial.colorBlackPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Obx(
+                      () => Container(
+                        padding: const EdgeInsets.all(16),
+                        alignment: Alignment.centerLeft,
+                        width: Get.width,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xffD4D6DD),
+                            width: controller.jKSiswa.value == "Perempuan"
+                                ? 0
+                                : .5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          color: controller.jKSiswa.value == "Perempuan"
+                              ? AllMaterial.colorWhiteBlue
+                              : Colors.white,
+                        ),
+                        child: Text(
+                          "Perempuan",
+                          style: TextStyle(
+                            color: controller.jKSiswa.value == "Perempuan"
+                                ? AllMaterial.colorWhite
+                                : AllMaterial.colorBlackPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
             ],
           ),
         ],
@@ -821,7 +927,7 @@ class PilihKelas extends StatelessWidget {
         children: [
           // Title
           const Text(
-            "Title",
+            "Mata Pelajaran",
             style: TextStyle(
               fontSize: 13,
               color: AllMaterial.colorGreyPrimary,
@@ -837,7 +943,7 @@ class PilihKelas extends StatelessWidget {
             focusNode: controller.focusNodeC,
             cursorColor: AllMaterial.colorBluePrimary,
             decoration: const InputDecoration(
-              hintText: "Kelompok IPAS",
+              hintText: "PPKN",
               contentPadding: EdgeInsets.symmetric(horizontal: 15),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -1002,40 +1108,11 @@ class GeneratePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 25),
-
-          // Jumlah Anggota Kelompok
           const Text(
-            "Jumlah Anggota Kelompok",
+            "*Jumlah anggota kelompok dibagi merata berdasarkan jumlah kelompok",
             style: TextStyle(
-              fontSize: 13,
               color: AllMaterial.colorGreyPrimary,
-              fontWeight: AllMaterial.fontBold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            keyboardType: TextInputType.number,
-            controller: controller.jumlahAnggotaKelompok,
-            onTapOutside: (_) {
-              controller.focusNodeA.unfocus();
-            },
-            focusNode: controller.focusNodeA,
-            cursorColor: AllMaterial.colorBluePrimary,
-            decoration: const InputDecoration(
-              hintText: "8",
-              contentPadding: EdgeInsets.symmetric(horizontal: 15),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AllMaterial.colorGreySec,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-                borderSide: BorderSide(
-                  color: AllMaterial.colorBluePrimary,
-                ),
-              ),
+              fontSize: 12,
             ),
           ),
         ],

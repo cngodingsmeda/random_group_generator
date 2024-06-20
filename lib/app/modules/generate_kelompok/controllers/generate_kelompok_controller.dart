@@ -17,6 +17,8 @@ class GenerateKelompokController extends GetxController {
     "TKJ 3",
     "AKL 1",
     "AKL 2",
+    "MPK 1",
+    "MPK 2",
     "BDG",
     "BRT 1",
     "BRT 2",
@@ -43,6 +45,8 @@ class GenerateKelompokController extends GetxController {
     "TKJ 3": 'assets/json/tkj3.json',
     "AKL 1": 'assets/json/akl1.json',
     "AKL 2": 'assets/json/akl2.json',
+    "MPK 1": 'assets/json/mpk1.json',
+    "MPK 2": 'assets/json/mpk2.json',
     "BDG": 'assets/json/bdg.json',
     "BRT 1": 'assets/json/brt_1.json',
     "BRT 2": 'assets/json/brt_2.json',
@@ -161,9 +165,6 @@ class GenerateKelompokController extends GetxController {
       kelompokList[i % jumlahKelompok].add(siswaTerpilih[i]);
     }
 
-    print("Kelompok List: $kelompokList");
-    print("Jumlah Kelompok: ${kelompokList.length}");
-
     update();
   }
 
@@ -194,7 +195,7 @@ class GenerateKelompokController extends GetxController {
 
   void setTitle() {
     if (titleC.text.isNotEmpty) {
-      titleKelompok.value = titleC.text.toUpperCase();
+      titleKelompok.value = "KELOMPOK ${titleC.text.toUpperCase()}";
     } else {
       titleKelompok.value = "KELOMPOK";
     }
@@ -211,7 +212,15 @@ class GenerateKelompokController extends GetxController {
   var histori = [].obs;
 
   void addToHistory(String title, String kelas, List kelompok) {
-    histori.add({'title': title, 'kelas': kelas, 'kelompok': kelompok});
+    histori.clear();
+
+    histori.addAll([
+      {'title': title, 'kelas': kelas, 'kelompok': kelompok}
+    ]);
+    update();
+
+    print(kelompok);
+
     Get.toNamed(Routes.HOME);
   }
 
@@ -224,6 +233,8 @@ class GenerateKelompokController extends GetxController {
     kelasTerpilih.clear();
     agamaTerpilih.clear();
     titleC.clear();
+    jumlahKelompok.clear();
+    jumlahAnggotaKelompok.clear();
     selectedKelas.value = "";
     kelasDipilih("Clear");
     filterAgamaActive.value = false;
@@ -236,5 +247,6 @@ class GenerateKelompokController extends GetxController {
     jumlahKelompokSet = '';
     jumlahAnggotaKelompokSet = '';
     kelompokList.clear();
+    checkboxValue.value = true;
   }
 }

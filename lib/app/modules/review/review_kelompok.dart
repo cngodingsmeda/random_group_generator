@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
-import 'package:random_group_generator/app/modules/home/views/home_view.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -12,17 +11,17 @@ class ReviewKelompokView extends StatelessWidget {
   final String kelas;
   final List<dynamic> kelompok;
 
-  ReviewKelompokView({
+  const ReviewKelompokView({
     super.key,
     required this.title,
     required this.kelas,
     required this.kelompok,
   });
 
-  var controller = Get.put(GenerateKelompokController());
-
   @override
   Widget build(BuildContext context) {
+    Get.put(GenerateKelompokController());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -35,12 +34,7 @@ class ReviewKelompokView extends StatelessWidget {
           IconButton(
             onPressed: () async {
               var message = _generateWhatsappMessage();
-              final result = await Share.share(message);
-              if (result.status == ShareResultStatus.success) {
-                print('Berhasil berbagi pesan WhatsApp!');
-              } else {
-                print('Gagal berbagi pesan WhatsApp.');
-              }
+              Share.share(message);
             },
             icon: const Icon(Icons.share),
           )
@@ -61,7 +55,6 @@ class ReviewKelompokView extends StatelessWidget {
                   children: List.generate(
                     kelompok.length,
                     (index) {
-                      print("detail: ${kelompok[index]}");
                       List item = kelompok[index];
                       final itemName = item
                           .where((siswa) =>
@@ -69,10 +62,7 @@ class ReviewKelompokView extends StatelessWidget {
                               siswa.containsKey('nama'))
                           .map<String>((siswa) => siswa['nama'] as String)
                           .toList();
-                      String itemNamedChar =
-                          itemName.toString().replaceAll("[", " ");
-                      String itemNamedCharacter =
-                          itemNamedChar.replaceAll("]", "");
+                      String itemNamedCharacter = itemName.join('\n');
                       return Container(
                         margin: const EdgeInsets.all(14),
                         padding: const EdgeInsets.only(
@@ -103,10 +93,11 @@ class ReviewKelompokView extends StatelessWidget {
                             ),
                             const SizedBox(height: 15),
                             Text(
-                              itemNamedCharacter.toString().replaceAll(
-                                    ",",
-                                    "\n",
-                                  ),
+                              itemNamedCharacter,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: AllMaterial.colorGreyPrimary,
+                              ),
                             ),
                           ],
                         ),
@@ -119,32 +110,30 @@ class ReviewKelompokView extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 2,
-        backgroundColor: AllMaterial.colorBluePrimary,
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const HomeView(),
-          ));
-        },
-        child: const Icon(
-          Icons.home,
-          color: AllMaterial.colorWhite,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   elevation: 2,
+      //   backgroundColor: AllMaterial.colorBluePrimary,
+      //   onPressed: () {
+      //     Get.off(() => const HomeView());
+      //   },
+      //   child: const Icon(
+      //     Icons.home,
+      //     color: AllMaterial.colorWhite,
+      //   ),
+      // ),
     );
   }
 
   String _generateWhatsappMessage() {
-    String message = "$title $kelas \n\n";
+    String message = "$title $kelas\n\n";
     for (int i = 0; i < kelompok.length; i++) {
       message += "Kelompok ${i + 1}:\n";
-      var group = kelompok[i];
+      List<dynamic> group = kelompok[i];
       for (var siswa in group) {
         message += "${siswa["nama"]}\n";
       }
       message += "\n";
     }
-    return Uri.encodeComponent(message);
+    return message;
   }
 }

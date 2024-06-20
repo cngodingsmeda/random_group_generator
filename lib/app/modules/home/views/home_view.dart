@@ -65,7 +65,13 @@ class HomeView extends GetView<HomeController> {
                       );
                     } else {
                       return Column(
-                        children: controller.histori.reversed.map((item) {
+                        children: controller.histori.reversed
+                            .toList()
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                          // int index = entry.key;
+                          var item = entry.value;
                           return Container(
                             margin: const EdgeInsets.only(top: 14),
                             width: Get.width,
@@ -79,7 +85,11 @@ class HomeView extends GetView<HomeController> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(16),
                               onTap: () {
-                                Get.to(() => ReviewKelompokView(title: item['title'], kelas: item['kelas'], kelompok: item['kelompok']));
+                                Get.to(() => ReviewKelompokView(
+                                      title: item['title'],
+                                      kelas: item['kelas'],
+                                      kelompok: item['kelompok'],
+                                    ));
                               },
                               child: ListTile(
                                 trailing: const Icon(
