@@ -2,40 +2,42 @@ name: random_group_generator
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment:
-  sdk: ">=3.4.0 <4.0.0"
+environment: 
+  sdk: '>=3.4.0 <4.0.0'
 
-dependencies:
+dependencies: 
   dropdown_search: ^5.0.6
   cupertino_icons: ^1.0.6
   get: 4.6.6
-  flutter:
-    sdk: flutter
   google_fonts: ^6.2.1
   share_plus: ^9.0.0
   flutter_launcher_icons: ^0.13.1
-
-dev_dependencies:
-  flutter_lints: ^3.0.0
-  flutter_test:
+  get_storage: 2.1.1
+  flutter: 
     sdk: flutter
 
-flutter_launcher_icons:
+dev_dependencies: 
+  flutter_lints: ^3.0.0
+  flutter_test: 
+    sdk: flutter
+
+flutter_launcher_icons: 
   android: launcher_icon
   image_path: assets/images/launcher.png
   ios: true
 
-flutter:
-  assets:
+flutter: 
+  assets: 
     - assets/json/
     - assets/images/
     - assets/
-  fonts:
+  fonts: 
     - family: Inter
-      fonts:
+      fonts: 
         - asset: assets/fonts/Inter-Black.ttf
         - asset: assets/fonts/Inter-ExtraBold.ttf
         - asset: assets/fonts/Inter-Bold.ttf
         - asset: assets/fonts/Inter-SemiBold.ttf
         - asset: assets/fonts/Inter-Regular.ttf
   uses-material-design: true
+

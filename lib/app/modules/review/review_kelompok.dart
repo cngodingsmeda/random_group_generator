@@ -60,7 +60,9 @@ class ReviewKelompokView extends StatelessWidget {
                           .where((siswa) =>
                               siswa is Map<String, dynamic> &&
                               siswa.containsKey('nama'))
-                          .map<String>((siswa) => siswa['nama'] as String)
+                          .map<String>(
+                            (siswa) => siswa['nama'] as String,
+                          )
                           .toList();
                       String itemNamedCharacter = itemName.join('\n');
                       return Container(

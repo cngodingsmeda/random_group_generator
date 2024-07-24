@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 abstract class AllMaterial {
   // Font Weight
@@ -19,4 +20,7 @@ abstract class AllMaterial {
   static const colorWhite = Color(0xffF8F9FE);
   static const colorBlueSec = Color(0xffB4DBFF);
   static const colorBluePrimary = Color(0xff006FFD);
+
+  // Storage
+  static var box = GetStorage();
 }
