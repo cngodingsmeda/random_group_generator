@@ -8,6 +8,8 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const GENERATE_KELOMPOK = _Paths.GENERATE_KELOMPOK;
   static const REVIEW_KELOMPOK = _Paths.REVIEW_KELOMPOK;
+  static const INTRODUCTION_PAGE = _Paths.INTRODUCTION_PAGE;
+  static const GENERATE_PIKET = _Paths.GENERATE_PIKET;
 }
 
 abstract class _Paths {
@@ -15,4 +17,6 @@ abstract class _Paths {
   static const HOME = '/home';
   static const GENERATE_KELOMPOK = '/generate-kelompok';
   static const REVIEW_KELOMPOK = '/review-kelompok';
+  static const INTRODUCTION_PAGE = '/introduction-page';
+  static const GENERATE_PIKET = '/generate-piket';
 }

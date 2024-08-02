@@ -11,7 +11,7 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(GenerateKelompokController());
+    final generateController = Get.put(GenerateKelompokController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -28,7 +28,7 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Buat kelompok Anda!",
+                      "Keadilan ada di tangan-mu!",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24,
@@ -36,7 +36,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     Text(
-                      "Auto-Generate untuk kebutuhan-mu",
+                      "Auto-Generate untuk kelompok kelas",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
@@ -53,17 +53,41 @@ class HomeView extends GetView<HomeController> {
                     vertical: 34,
                   ),
                   child: Obx(() {
-                    if (controller.histori.isEmpty) {
-                      return const Column(
+                    if (generateController.histori.isEmpty) {
+                      return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Histori:",
-                            style: TextStyle(
-                                color: AllMaterial.colorBlackPrimary,
-                                fontWeight: AllMaterial.fontBlack),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Histori :",
+                                style: TextStyle(
+                                  color: AllMaterial.colorBlackPrimary,
+                                  fontWeight: AllMaterial.fontBlack,
+                                ),
+                              ),
+                              Opacity(
+                                opacity: 0,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(15),
+                                  onTap: null,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text(
+                                      "Hapus",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: AllMaterial.fontBold,
+                                        color: AllMaterial.colorGreySec,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Center(
+                          const Center(
                             child: Text(
                               "Belum ada histori",
                               style: TextStyle(
@@ -78,24 +102,166 @@ class HomeView extends GetView<HomeController> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Histori:",
-                            style: TextStyle(
-                              color: AllMaterial.colorBlackPrimary,
-                              fontWeight: AllMaterial.fontBlack,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Histori :",
+                                style: TextStyle(
+                                  color: AllMaterial.colorBlackPrimary,
+                                  fontWeight: AllMaterial.fontBlack,
+                                ),
+                              ),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () {
+                                  Get.dialog(
+                                    barrierDismissible: true,
+                                    Dialog(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 20,
+                                          horizontal: 20,
+                                        ),
+                                        decoration: const BoxDecoration(
+                                          color: AllMaterial.colorWhite,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.help_outline_outlined,
+                                              color:
+                                                  AllMaterial.colorBluePrimary,
+                                              size: 70,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              child: Text(
+                                                "Ingin menghapus Histori?",
+                                                style: TextStyle(
+                                                  fontWeight:
+                                                      AllMaterial.fontSemiBold,
+                                                  fontSize: 17,
+                                                  fontFamily:
+                                                      AllMaterial.fontFamily,
+                                                  color: AllMaterial
+                                                      .colorBlackPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    Get.back();
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      vertical: 10,
+                                                      horizontal: 15,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: AllMaterial
+                                                          .colorBluePrimary,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(10),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      "Batal",
+                                                      style: TextStyle(
+                                                        color: AllMaterial
+                                                            .colorWhite,
+                                                        fontWeight: AllMaterial
+                                                            .fontMedium,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                InkWell(
+                                                  onTap: () {
+                                                    generateController
+                                                        .clearHistory();
+                                                    Get.back();
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      vertical: 10,
+                                                      horizontal: 10,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: AllMaterial
+                                                            .colorBluePrimary,
+                                                      ),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                        Radius.circular(10),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      "Hapus",
+                                                      style: TextStyle(
+                                                        color: AllMaterial
+                                                            .colorBluePrimary,
+                                                        fontWeight: AllMaterial
+                                                            .fontMedium,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    "Hapus",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: AllMaterial.fontBold,
+                                      color: AllMaterial.colorBluePrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          // const SizedBox(height: 5),
                           Column(
-                            children: controller.histori.reversed
+                            children: generateController.histori.reversed
                                 .toList()
                                 .asMap()
                                 .entries
                                 .map((entry) {
-                              AllMaterial.box.remove("itemKelompok");
-                              // int index = entry.key;
                               var item = entry.value;
-                              // var item
                               return Container(
                                 margin: const EdgeInsets.only(top: 14),
                                 width: Get.width,
@@ -109,11 +275,13 @@ class HomeView extends GetView<HomeController> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(16),
                                   onTap: () {
-                                    Get.to(() => ReviewKelompokView(
-                                          title: item['title'],
-                                          kelas: item['kelas'],
-                                          kelompok: item['kelompok'],
-                                        ));
+                                    Get.to(
+                                      () => ReviewKelompokView(
+                                        title: item['title'],
+                                        kelas: item['kelas'],
+                                        kelompok: item['kelompok'],
+                                      ),
+                                    );
                                   },
                                   child: ListTile(
                                     trailing: const Icon(
@@ -163,10 +331,8 @@ class HomeView extends GetView<HomeController> {
         elevation: 2,
         backgroundColor: AllMaterial.colorBluePrimary,
         onPressed: () {
-          controller.resetState();
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const GenerateKelompokView(),
-          ));
+          generateController.resetState();
+          Get.offAll(() => const GenerateKelompokView());
         },
         child: const Icon(
           Icons.add,

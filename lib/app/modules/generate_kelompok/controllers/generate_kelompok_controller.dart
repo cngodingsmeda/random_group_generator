@@ -1,28 +1,56 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:random_group_generator/app/routes/app_pages.dart';
 
 class GenerateKelompokController extends GetxController {
+  var isGenPiket = false.obs;
   var checkboxValue = true.obs;
   var filterAgamaActive = false.obs;
   var filterJKActive = false.obs;
+  var namaHari = [
+    "SENIN",
+    "SELASA",
+    "RABU",
+    "KAMIS",
+    "JUMAT",
+    "SABTU",
+  ];
   var namaKelas = [
-    "RPL 1",
-    "RPL 2",
-    "RPL 3",
-    "TKJ 1",
-    "TKJ 2",
-    "TKJ 3",
-    "AKL 1",
-    "AKL 2",
-    "MPK 1",
-    "MPK 2",
-    "BDG",
-    "BRT 1",
-    "BRT 2",
-    "LPS",
+    "X RPL 1",
+    "X RPL 2",
+    "X TKJ 1",
+    "X TKJ 2",
+    "X TKJ 3",
+    "X AKL 1",
+    "X AKL 2",
+    "X AKL 3",
+    "X MPK 1",
+    "X MPK 2",
+    "X BDG 1",
+    "X BDG 2",
+    "X BRT 1",
+    "X BRT 2",
+    "X ULW 1",
+    "X ULW 2",
+    "XI RPL 1",
+    "XI RPL 2",
+    "XI RPL 3",
+    "XI TKJ 1",
+    "XI TKJ 2",
+    "XI TKJ 3",
+    "XI AKL 1",
+    "XI AKL 2",
+    "XI MPK 1",
+    "XI MPK 2",
+    "XI BDG",
+    "XI BRT 1",
+    "XI BRT 2",
+    "XI ULW",
+    "XI LPS",
   ].obs;
   var agamaSiswa = ["ISLAM", "HINDU", "KRISTEN", "BUDDHA", "KONGHUCU"].obs;
   var selectedKelas = ''.obs;
@@ -37,20 +65,37 @@ class GenerateKelompokController extends GetxController {
   var jumlahAnggotaKelompokSet = "";
 
   final Map<String, String> kelasJsonMap = {
-    "RPL 1": 'assets/json/rpl1.json',
-    "RPL 2": 'assets/json/rpl2.json',
-    "RPL 3": 'assets/json/rpl3.json',
-    "TKJ 1": 'assets/json/tkj1.json',
-    "TKJ 2": 'assets/json/tkj2.json',
-    "TKJ 3": 'assets/json/tkj3.json',
-    "AKL 1": 'assets/json/akl1.json',
-    "AKL 2": 'assets/json/akl2.json',
-    "MPK 1": 'assets/json/mpk1.json',
-    "MPK 2": 'assets/json/mpk2.json',
-    "BDG": 'assets/json/bdg.json',
-    "BRT 1": 'assets/json/brt_1.json',
-    "BRT 2": 'assets/json/brt_2.json',
-    "LPS": 'assets/json/lps.json',
+    "X RPL 1": 'assets/json/24/rpl1.json',
+    "X RPL 2": 'assets/json/24/rpl2.json',
+    "X TKJ 1": 'assets/json/24/tkj1.json',
+    "X TKJ 2": 'assets/json/24/tkj2.json',
+    "X TKJ 3": 'assets/json/24/tkj3.json',
+    "X AKL 1": 'assets/json/24/akl1.json',
+    "X AKL 2": 'assets/json/24/akl2.json',
+    "X AKL 3": 'assets/json/24/akl3.json',
+    "X MPK 1": 'assets/json/24/mpk1.json',
+    "X MPK 2": 'assets/json/24/mpk2.json',
+    "X BDG 1": 'assets/json/24/bdg1.json',
+    "X BDG 2": 'assets/json/24/bdg2.json',
+    "X BRT 1": 'assets/json/24/brt1.json',
+    "X BRT 2": 'assets/json/24/brt2.json',
+    "X ULW 1": 'assets/json/24/ulw1.json',
+    "X ULW 2": 'assets/json/24/ulw2.json',
+    "XI RPL 1": 'assets/json/23/rpl1.json',
+    "XI RPL 2": 'assets/json/23/rpl2.json',
+    "XI RPL 3": 'assets/json/23/rpl3.json',
+    "XI TKJ 1": 'assets/json/23/tkj1.json',
+    "XI TKJ 2": 'assets/json/23/tkj2.json',
+    "XI TKJ 3": 'assets/json/23/tkj3.json',
+    "XI AKL 1": 'assets/json/23/akl1.json',
+    "XI AKL 2": 'assets/json/23/akl2.json',
+    "XI MPK 1": 'assets/json/23/mpk1.json',
+    "XI MPK 2": 'assets/json/23/mpk2.json',
+    "XI BDG": 'assets/json/23/bdg.json',
+    "XI BRT 1": 'assets/json/23/brt1.json',
+    "XI BRT 2": 'assets/json/23/brt2.json',
+    "XI ULW": 'assets/json/23/ulw.json',
+    "XI LPS": 'assets/json/23/lps.json',
   };
 
   void kelasDipilih(String value) async {
@@ -202,6 +247,8 @@ class GenerateKelompokController extends GetxController {
     update();
   }
 
+
+
   var currentStep = 1.obs;
 
   void setCurrentStep(int step) {
@@ -209,23 +256,48 @@ class GenerateKelompokController extends GetxController {
   }
 
   // Histori
-  var histori = [].obs;
+  final GetStorage _storage = GetStorage();
+  var histori = <Map<String, dynamic>>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadHistory();
+  }
+
+  void loadHistory() {
+    var storedHistory = _storage
+            .read<List<dynamic>>('histori')
+            ?.map((e) => Map<String, dynamic>.from(e))
+            .toList() ??
+        [];
+    histori.value = storedHistory;
+  }
 
   void addToHistory(String title, String kelas, List kelompok) {
-    histori.clear();
+    if (histori.length >= 2) {
+      histori.removeAt(0);
+    }
 
-    histori.addAll([
-      {'title': title, 'kelas': kelas, 'kelompok': kelompok}
-    ]);
+    // Create a deep copy of the kelompok list
+    List copiedKelompok = kelompok.map((group) => List.from(group)).toList();
+
+    histori.add({'title': title, 'kelas': kelas, 'kelompok': copiedKelompok});
+    _storage.write('histori', histori.toList());
     update();
 
     print(kelompok);
+    Get.offAllNamed(Routes.HOME);
+  }
 
-    Get.toNamed(Routes.HOME);
+  void removeFromHistory(int index) {
+    histori.removeAt(index);
+    _storage.write('histori', histori.toList());
   }
 
   void clearHistory() {
     histori.clear();
+    _storage.remove('histori');
   }
 
   void resetState() {
@@ -239,11 +311,16 @@ class GenerateKelompokController extends GetxController {
     kelasDipilih("Clear");
     filterAgamaActive.value = false;
     filterJKActive.value = false;
+    // focusNodeC.unfocus();
+    // focusNodeA.unfocus();
+    // focusNodeJ.unfocus();
     selectedAgamaFilter.value = "";
     jenisKelaminTerpilih.clear();
+    checkboxValue.value = true;
     jumlahSiswaTerpilih.clear();
     jKSiswa.value = '';
     titleKelompok.value = 'KELOMPOK';
+    isGenPiket.value = false;
     jumlahKelompokSet = '';
     jumlahAnggotaKelompokSet = '';
     kelompokList.clear();

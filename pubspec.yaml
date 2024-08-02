@@ -28,7 +28,8 @@ flutter_launcher_icons:
 
 flutter: 
   assets: 
-    - assets/json/
+    - assets/json/23/
+    - assets/json/24/
     - assets/images/
     - assets/
   fonts: 

@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:random_group_generator/constants/all_material.dart';
-import '../controllers/generate_kelompok_controller.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../controllers/generate_kelompok_controller.dart';
 
 class GenerateKelompokView extends GetView<GenerateKelompokController> {
   const GenerateKelompokView({super.key});
@@ -12,6 +13,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
   @override
   Widget build(BuildContext context) {
     var controller = Get.put(GenerateKelompokController());
+    var scrollController = Get.put(ScrollController());
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -24,9 +26,10 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                 Expanded(
                   child: Obx(
                     () => SingleChildScrollView(
-                      physics: (controller.checkboxValue.isTrue)
+                      physics: (controller.currentStep.value == 4)
                           ? const NeverScrollableScrollPhysics()
-                          : const ScrollPhysics(),
+                          : const AlwaysScrollableScrollPhysics(),
+                      controller: scrollController,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -89,8 +92,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                                   "Batal",
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                    fontWeight:
-                                                        AllMaterial.fontExtraBold,
+                                                    fontWeight: AllMaterial
+                                                        .fontExtraBold,
                                                     color: AllMaterial
                                                         .colorBluePrimary,
                                                   ),
@@ -99,11 +102,14 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                             ),
                                           ),
                                     Obx(() => Text(
-                                          _getTitle(controller.currentStep.value),
+                                          _getTitle(
+                                              controller.currentStep.value),
                                           style: const TextStyle(
                                             fontSize: 16,
-                                            fontWeight: AllMaterial.fontExtraBold,
-                                            color: AllMaterial.colorBlackPrimary,
+                                            fontWeight:
+                                                AllMaterial.fontExtraBold,
+                                            color:
+                                                AllMaterial.colorBlackPrimary,
                                           ),
                                         )),
                                     Obx(
@@ -113,7 +119,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                                 ? 1
                                                 : 0,
                                         child: InkWell(
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                           onTap: () async {
                                             String whatsappMessage =
                                                 generateWhatsappMessage();
@@ -126,7 +133,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                               // Menyimpan ke data title dan kelas ke dalam variabel histori, ketika ditekan akan mengarahkan ke page review tanpa tombol batal yang dapat diakses kapan saja
                                             } else {
                                               print(
-                                                  'Gagal berbagi pesan WhatsApp.');
+                                                'Gagal berbagi pesan WhatsApp.',
+                                              );
                                             }
                                           },
                                           child: const Padding(
@@ -137,8 +145,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                                 fontSize: 14,
                                                 fontWeight:
                                                     AllMaterial.fontExtraBold,
-                                                color:
-                                                    AllMaterial.colorBluePrimary,
+                                                color: AllMaterial
+                                                    .colorBluePrimary,
                                               ),
                                             ),
                                           ),
@@ -147,7 +155,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     ),
                                   ],
                                 ),
-      
+
                           // Stepper
                           Container(
                             margin: const EdgeInsets.symmetric(
@@ -155,37 +163,42 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                             width: Get.width,
                             child: Obx(() {
                               return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   StepperWidget(
                                     number: "1",
                                     titleText: "Pilih Kelas",
                                     isActive: controller.currentStep.value >= 1,
-                                    isCompleted: controller.currentStep.value > 1,
+                                    isCompleted:
+                                        controller.currentStep.value > 1,
                                   ),
                                   StepperWidget(
                                     number: "2",
                                     titleText: "Filter",
                                     isActive: controller.currentStep.value >= 2,
-                                    isCompleted: controller.currentStep.value > 2,
+                                    isCompleted:
+                                        controller.currentStep.value > 2,
                                   ),
                                   StepperWidget(
                                     number: "3",
                                     titleText: "Generate",
                                     isActive: controller.currentStep.value >= 3,
-                                    isCompleted: controller.currentStep.value > 3,
+                                    isCompleted:
+                                        controller.currentStep.value > 3,
                                   ),
                                   StepperWidget(
                                     number: "4",
                                     titleText: "Review",
                                     isActive: controller.currentStep.value >= 4,
-                                    isCompleted: controller.currentStep.value > 4,
+                                    isCompleted:
+                                        controller.currentStep.value > 4,
                                   ),
                                 ],
                               );
                             }),
                           ),
-      
+
                           // Text & Title
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 13),
@@ -208,8 +221,9 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                               ),
                             ),
                           ),
-      
-                          Obx(() => _getPageWidget(controller.currentStep.value)),
+
+                          Obx(() =>
+                              _getPageWidget(controller.currentStep.value)),
                         ],
                       ),
                     ),
@@ -220,9 +234,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                     if (controller.currentStep.value == 2) {
                       return Container(
                         width: Get.width,
-                        height: controller.checkboxValue.isFalse
-                            ? Get.height * 0.17
-                            : Get.height * 0.63,
+                        height: Get.height * 0.17,
                         color: const Color.fromARGB(11, 255, 255, 255),
                         alignment: Alignment.bottomCenter,
                         child: Column(
@@ -256,7 +268,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     color: AllMaterial.colorGreyPrimary,
                                   ),
                                 ),
-                                controlAffinity: ListTileControlAffinity.leading,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                               ),
                             ),
                             ElevatedButton(
@@ -409,7 +422,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     height: 120,
                                     padding: const EdgeInsets.all(20),
                                     child: const Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -499,11 +513,36 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
       case 1:
         return PilihKelas(controller: controller);
       case 2:
-        return FilterPage(controller: controller);
+        return FutureBuilder(
+          future: Future.delayed(const Duration(milliseconds: 20)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return FilterPage(controller: controller);
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        );
       case 3:
         return GeneratePage(controller: controller);
       case 4:
-        return ReviewPage(controller: controller);
+        return FutureBuilder(
+          future: Future.delayed(const Duration(seconds: 1)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ReviewPage(controller: controller);
+            } else {
+              return const Padding(
+                padding: EdgeInsets.only(top: 40),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AllMaterial.colorBluePrimary,
+                  ),
+                ),
+              );
+            }
+          },
+        );
       default:
         return const Center(
           child: Text("Gheral Ganteng"),
@@ -601,243 +640,288 @@ class ReviewPage extends StatelessWidget {
   }
 }
 
-class FilterPage extends StatelessWidget {
+class FilterPage extends StatefulWidget {
   final GenerateKelompokController controller;
   const FilterPage({super.key, required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 14),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      width: Get.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffD4D6DD),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Tentukan Agama
-          Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  controller.toggleFilterAgama();
-                },
-                child: Obx(
-                  () => Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: controller.filterAgamaActive.value
-                              ? AllMaterial.colorBluePrimary
-                              : AllMaterial.colorGreySec,
-                        ),
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: controller.filterAgamaActive.value
-                                ? AllMaterial.colorWhite
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Filter Berdasarkan Agama",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: AllMaterial.fontBold,
-                              color: AllMaterial.colorGreyPrimary,
-                            ),
-                          ),
-                          Text(
-                            "(untuk kebutuhan Kelompok Agama)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AllMaterial.colorGreySec,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Obx(() {
-                return Wrap(
-                  spacing: 10.0,
-                  children: controller.agamaSiswa.map((String agama) {
-                    return ChoiceChip(
-                      checkmarkColor: AllMaterial.colorWhite,
-                      label: Text(
-                        agama,
-                        style: TextStyle(
-                          color: controller.filterAgamaActive.value
-                              ? AllMaterial.colorWhite
-                              : AllMaterial.colorGreyPrimary,
-                        ),
-                      ),
-                      elevation: 0,
-                      side: const BorderSide(
-                        width: 0,
-                        color: Colors.transparent,
-                      ),
-                      selected: controller.selectedAgamaFilter.value == agama,
-                      onSelected: controller.filterAgamaActive.value
-                          ? (bool selected) {
-                              controller.toggleAgama(agama);
-                            }
-                          : null,
-                      selectedColor: AllMaterial.colorBluePrimary,
-                      disabledColor: AllMaterial.colorWhite,
-                      backgroundColor: AllMaterial.colorBlueSec,
-                    );
-                  }).toList(),
-                );
-              }),
-            ],
-          ),
-          const SizedBox(height: 24),
+  State<FilterPage> createState() => _FilterPageState();
+}
 
-          // Tentukan Jenis Kelamin
-          Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  controller.toggleFilterJK();
-                },
-                child: Obx(
-                  () => Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: controller.filterJKActive.value
-                              ? AllMaterial.colorBluePrimary
-                              : AllMaterial.colorGreySec,
-                        ),
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: controller.filterJKActive.value
-                                ? AllMaterial.colorWhite
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Filter Berdasarkan Jenis Kelamin",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: AllMaterial.fontBold,
-                              color: AllMaterial.colorGreyPrimary,
-                            ),
-                          ),
-                          Text(
-                            "(jika tidak dipilih, nilai default acak)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AllMaterial.colorGreySec,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  controller.toggleJK("Laki-Laki");
-                },
-                child: Obx(() => Container(
-                      padding: const EdgeInsets.all(16),
-                      alignment: Alignment.centerLeft,
-                      width: Get.width,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xffD4D6DD),
-                          width:
-                              controller.jKSiswa.value == "Laki-Laki" ? 0 : .5,
-                        ),
-                        color: controller.jKSiswa.value == "Laki-Laki"
-                            ? AllMaterial.colorBluePrimary
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        "Laki-Laki",
-                        style: TextStyle(
-                          color: controller.jKSiswa.value == "Laki-Laki"
-                              ? AllMaterial.colorWhite
-                              : AllMaterial.colorBlackPrimary,
-                        ),
-                      ),
-                    )),
-              ),
-              const SizedBox(height: 8),
-              InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  controller.toggleJK("Perempuan");
-                },
-                child: Obx(
-                  () => Container(
-                    padding: const EdgeInsets.all(16),
-                    alignment: Alignment.centerLeft,
-                    width: Get.width,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xffD4D6DD),
-                        width: controller.jKSiswa.value == "Perempuan" ? 0 : .5,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: controller.jKSiswa.value == "Perempuan"
-                          ? AllMaterial.colorBluePrimary
-                          : Colors.white,
-                    ),
-                    child: Text(
-                      "Perempuan",
-                      style: TextStyle(
-                        color: controller.jKSiswa.value == "Perempuan"
-                            ? AllMaterial.colorWhite
-                            : AllMaterial.colorBlackPrimary,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
+class _FilterPageState extends State<FilterPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 0),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => Opacity(
+        opacity: widget.controller.checkboxValue.isFalse ? 1 : 0,
+        child: Container(
+          margin: const EdgeInsets.only(top: 14),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          width: Get.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xffD4D6DD),
+              width: 1,
+            ),
           ),
-        ],
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Tentukan Agama
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        widget.controller.toggleFilterAgama();
+                      },
+                      child: Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: widget.controller.filterAgamaActive.value
+                                    ? AllMaterial.colorBluePrimary
+                                    : AllMaterial.colorGreySec,
+                              ),
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color:
+                                      widget.controller.filterAgamaActive.value
+                                          ? AllMaterial.colorWhite
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Filter Berdasarkan Agama",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff6C6C6C),
+                                  ),
+                                ),
+                                Text(
+                                  "(untuk kebutuhan Kelompok Agama)",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xffB0B0B0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Obx(() {
+                      return Wrap(
+                        spacing: 10.0,
+                        children:
+                            widget.controller.agamaSiswa.map((String agama) {
+                          return ChoiceChip(
+                            checkmarkColor: AllMaterial.colorWhite,
+                            label: Text(
+                              agama,
+                              style: TextStyle(
+                                color: widget.controller.filterAgamaActive.value
+                                    ? AllMaterial.colorWhite
+                                    : AllMaterial.colorGreyPrimary,
+                              ),
+                            ),
+                            elevation: 0,
+                            side: const BorderSide(
+                              width: 0,
+                              color: Colors.transparent,
+                            ),
+                            selected:
+                                widget.controller.selectedAgamaFilter.value ==
+                                    agama,
+                            onSelected:
+                                widget.controller.filterAgamaActive.value
+                                    ? (bool selected) {
+                                        widget.controller.toggleAgama(agama);
+                                      }
+                                    : null,
+                            selectedColor: AllMaterial.colorBluePrimary,
+                            disabledColor: AllMaterial.colorWhite,
+                            backgroundColor: AllMaterial.colorBlueSec,
+                          );
+                        }).toList(),
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // Tentukan Jenis Kelamin
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        widget.controller.toggleFilterJK();
+                      },
+                      child: Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: widget.controller.filterJKActive.value
+                                    ? AllMaterial.colorBluePrimary
+                                    : AllMaterial.colorGreySec,
+                              ),
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: widget.controller.filterJKActive.value
+                                      ? AllMaterial.colorWhite
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Filter Berdasarkan Jenis Kelamin",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff6C6C6C),
+                                  ),
+                                ),
+                                Text(
+                                  "(jika tidak dipilih, nilai default acak)",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xffB0B0B0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        widget.controller.toggleJK("Laki-Laki");
+                      },
+                      child: Obx(
+                        () => Container(
+                          padding: const EdgeInsets.all(16),
+                          alignment: Alignment.centerLeft,
+                          width: Get.width,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xffD4D6DD),
+                              width:
+                                  widget.controller.jKSiswa.value == "Laki-Laki"
+                                      ? 0
+                                      : .5,
+                            ),
+                            color:
+                                widget.controller.jKSiswa.value == "Laki-Laki"
+                                    ? AllMaterial.colorBluePrimary
+                                    : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Laki-Laki",
+                            style: TextStyle(
+                              color:
+                                  widget.controller.jKSiswa.value == "Laki-Laki"
+                                      ? AllMaterial.colorWhite
+                                      : AllMaterial.colorBlackPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        widget.controller.toggleJK("Perempuan");
+                      },
+                      child: Obx(
+                        () => Container(
+                          padding: const EdgeInsets.all(16),
+                          alignment: Alignment.centerLeft,
+                          width: Get.width,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xffD4D6DD),
+                              width:
+                                  widget.controller.jKSiswa.value == "Perempuan"
+                                      ? 0
+                                      : .5,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            color:
+                                widget.controller.jKSiswa.value == "Perempuan"
+                                    ? AllMaterial.colorBluePrimary
+                                    : Colors.white,
+                          ),
+                          child: Text(
+                            "Perempuan",
+                            style: TextStyle(
+                              color:
+                                  widget.controller.jKSiswa.value == "Perempuan"
+                                      ? AllMaterial.colorWhite
+                                      : AllMaterial.colorBlackPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -878,6 +962,7 @@ class PilihKelas extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextField(
+            keyboardType: TextInputType.text,
             controller: controller.titleC,
             onTapOutside: (_) {
               controller.focusNodeC.unfocus();

@@ -1,8 +1,5 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -20,8 +17,6 @@ class ReviewKelompokView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(GenerateKelompokController());
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -112,17 +107,6 @@ class ReviewKelompokView extends StatelessWidget {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   elevation: 2,
-      //   backgroundColor: AllMaterial.colorBluePrimary,
-      //   onPressed: () {
-      //     Get.off(() => const HomeView());
-      //   },
-      //   child: const Icon(
-      //     Icons.home,
-      //     color: AllMaterial.colorWhite,
-      //   ),
-      // ),
     );
   }
 
