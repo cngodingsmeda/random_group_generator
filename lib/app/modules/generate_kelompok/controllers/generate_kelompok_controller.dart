@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:random_group_generator/app/routes/app_pages.dart';
 
 class GenerateKelompokController extends GetxController {
   var isGenPiket = false.obs;
@@ -102,7 +101,7 @@ class GenerateKelompokController extends GetxController {
     if (kelasJsonMap.containsKey(value)) {
       var data = await rootBundle.loadString(kelasJsonMap[value]!);
       List<dynamic> jsonResult = jsonDecode(data);
-      kelasTerpilih.assignAll(jsonResult);
+      kelasTerpilih.assignAll(jsonResult..shuffle());
     } else {
       kelasTerpilih.clear();
     }
@@ -184,9 +183,9 @@ class GenerateKelompokController extends GetxController {
     if (jenisKelaminTerpilih.isNotEmpty) {
       jumlahSiswaTerpilih.assignAll(jenisKelaminTerpilih);
     } else if (agamaTerpilih.isNotEmpty) {
-      jumlahSiswaTerpilih.assignAll(agamaTerpilih);
+      jumlahSiswaTerpilih.assignAll(agamaTerpilih.reversed);
     } else if (kelasTerpilih.isNotEmpty) {
-      jumlahSiswaTerpilih.assignAll(kelasTerpilih);
+      jumlahSiswaTerpilih.assignAll(kelasTerpilih.reversed);
     }
     update();
   }
@@ -194,11 +193,12 @@ class GenerateKelompokController extends GetxController {
   var kelompokList = <List<dynamic>>[].obs;
 
   void generateKelompok() {
+    RxList<dynamic> kelompokAcak = jumlahSiswaTerpilih..shuffle();
     int jumlahKelompok = int.tryParse(jumlahKelompokSet) ?? 1;
     int.tryParse(jumlahAnggotaKelompokSet) ??
-        (jumlahSiswaTerpilih.length / jumlahKelompok).ceil();
+        (kelompokAcak.length / jumlahKelompok).ceil();
 
-    List<dynamic> siswaTerpilih = List.from(jumlahSiswaTerpilih);
+    List<dynamic> siswaTerpilih = List.from(kelompokAcak);
     siswaTerpilih.shuffle();
 
     kelompokList.clear();
@@ -211,6 +211,11 @@ class GenerateKelompokController extends GetxController {
     }
 
     update();
+    addToHistory(
+      titleKelompok.value,
+      selectedKelas.value,
+      kelompokList,
+    );
   }
 
   // Text Editing Controllers
@@ -247,12 +252,19 @@ class GenerateKelompokController extends GetxController {
     update();
   }
 
-
-
   var currentStep = 1.obs;
 
   void setCurrentStep(int step) {
     currentStep.value = step;
+  }
+
+  // Dark Mode
+  RxBool isDarkMode = false.obs;
+  void toggleTheme() {
+    isDarkMode.value = !isDarkMode.value;
+    _storage.write('isDarkMode', isDarkMode.value);
+    Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+    print(_storage.read("isDarkMode"));
   }
 
   // Histori
@@ -263,6 +275,10 @@ class GenerateKelompokController extends GetxController {
   void onInit() {
     super.onInit();
     loadHistory();
+    isDarkMode.value = _storage.read('isDarkMode') ?? false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+    });
   }
 
   void loadHistory() {
@@ -285,9 +301,6 @@ class GenerateKelompokController extends GetxController {
     histori.add({'title': title, 'kelas': kelas, 'kelompok': copiedKelompok});
     _storage.write('histori', histori.toList());
     update();
-
-    print(kelompok);
-    Get.offAllNamed(Routes.HOME);
   }
 
   void removeFromHistory(int index) {

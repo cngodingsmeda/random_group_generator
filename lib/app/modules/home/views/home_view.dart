@@ -14,7 +14,8 @@ class HomeView extends GetView<HomeController> {
     final generateController = Get.put(GenerateKelompokController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor:
+      //     generateController.isDarkMode.value ? Colors.black : Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -30,7 +31,7 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       "Keadilan ada di tangan-mu!",
                       style: TextStyle(
-                        color: Colors.black,
+                        // color: Colors.black,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -38,7 +39,7 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       "Auto-Generate untuk kelompok kelas",
                       style: TextStyle(
-                        color: Colors.grey,
+                        // color: Colors.grey,
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                       ),
@@ -108,7 +109,7 @@ class HomeView extends GetView<HomeController> {
                               const Text(
                                 "Histori :",
                                 style: TextStyle(
-                                  color: AllMaterial.colorBlackPrimary,
+                                  // color: AllMaterial.colorBlackPrimary,
                                   fontWeight: AllMaterial.fontBlack,
                                 ),
                               ),
@@ -124,7 +125,7 @@ class HomeView extends GetView<HomeController> {
                                           horizontal: 20,
                                         ),
                                         decoration: const BoxDecoration(
-                                          color: AllMaterial.colorWhite,
+                                          // color: AllMaterial.colorWhite,
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(10),
                                           ),
@@ -154,8 +155,8 @@ class HomeView extends GetView<HomeController> {
                                                   fontSize: 17,
                                                   fontFamily:
                                                       AllMaterial.fontFamily,
-                                                  color: AllMaterial
-                                                      .colorBlackPrimary,
+                                                  // color: AllMaterial
+                                                  //     .colorBlackPrimary,
                                                 ),
                                               ),
                                             ),
@@ -186,13 +187,16 @@ class HomeView extends GetView<HomeController> {
                                                         Radius.circular(10),
                                                       ),
                                                     ),
-                                                    child: const Text(
-                                                      "Batal",
-                                                      style: TextStyle(
-                                                        color: AllMaterial
-                                                            .colorWhite,
-                                                        fontWeight: AllMaterial
-                                                            .fontMedium,
+                                                    child: Obx(
+                                                      () => Text(
+                                                        "Batal",
+                                                        style: TextStyle(
+                                                          color: generateController.isDarkMode.value ? AllMaterial
+                                                              .colorBlackPrimary : AllMaterial.colorWhite,
+                                                          fontWeight:
+                                                              AllMaterial
+                                                                  .fontMedium,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -241,14 +245,19 @@ class HomeView extends GetView<HomeController> {
                                     ),
                                   );
                                 },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    "Hapus",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: AllMaterial.fontBold,
-                                      color: AllMaterial.colorBluePrimary,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Obx(
+                                    () => Text(
+                                      "Hapus",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: AllMaterial.fontBold,
+                                        color:
+                                            generateController.isDarkMode.value
+                                                ? AllMaterial.colorWhite
+                                                : AllMaterial.colorBluePrimary,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -286,7 +295,7 @@ class HomeView extends GetView<HomeController> {
                                   child: ListTile(
                                     trailing: const Icon(
                                       Icons.keyboard_arrow_right_rounded,
-                                      color: AllMaterial.colorGreyPrimary,
+                                      // color: AllMaterial.colorGreyPrimary,
                                     ),
                                     leading: const CircleAvatar(
                                       backgroundColor: AllMaterial.colorGreySec,
@@ -301,7 +310,7 @@ class HomeView extends GetView<HomeController> {
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
-                                        color: AllMaterial.colorBlackPrimary,
+                                        // color: AllMaterial.colorBlackPrimary,
                                       ),
                                     ),
                                     subtitle: Text(
@@ -309,7 +318,7 @@ class HomeView extends GetView<HomeController> {
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AllMaterial.colorGreyPrimary,
+                                        // color: AllMaterial.colorGreyPrimary,
                                       ),
                                     ),
                                   ),
@@ -327,17 +336,50 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 2,
-        backgroundColor: AllMaterial.colorBluePrimary,
-        onPressed: () {
-          generateController.resetState();
-          Get.offAll(() => const GenerateKelompokView());
-        },
-        child: const Icon(
-          Icons.add,
-          color: AllMaterial.colorWhite,
-        ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Obx(
+            () => FloatingActionButton(
+              heroTag: "darkModeToggle",
+              elevation: 2,
+              backgroundColor: generateController.isDarkMode.value
+                  ? AllMaterial.colorBlackPrimary
+                  : AllMaterial.colorWhiteBlue,
+              onPressed: () {
+                generateController.toggleTheme();
+              },
+              child: Obx(
+                () => Icon(
+                  generateController.isDarkMode.value
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                  color: generateController.isDarkMode.value
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
+            ),
+          ),
+          // const SizedBox(height: 15),
+          Container(
+            margin: const EdgeInsets.only(bottom: 25, top: 10),
+            child: FloatingActionButton(
+              heroTag: "keGenerateKelompok",
+              elevation: 2,
+              backgroundColor: AllMaterial.colorBluePrimary,
+              onPressed: () {
+                generateController.resetState();
+                Get.offAll(() => const GenerateKelompokView());
+              },
+              child: const Icon(
+                Icons.add,
+                color: AllMaterial.colorWhite,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

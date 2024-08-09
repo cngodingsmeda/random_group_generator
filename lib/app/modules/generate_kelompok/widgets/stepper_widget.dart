@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 
 class StepperWidget extends StatelessWidget {
@@ -17,6 +19,7 @@ class StepperWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(GenerateKelompokController());
     return Column(
       children: [
         CircleAvatar(
@@ -37,12 +40,18 @@ class StepperWidget extends StatelessWidget {
                 ),
         ),
         const SizedBox(height: 10),
-        Text(
-          titleText,
-          style: TextStyle(
-            color: isActive ? AllMaterial.colorBlackPrimary : Colors.grey,
-            fontSize: 14,
-            fontWeight: AllMaterial.fontBold,
+        Obx(
+          () => Text(
+            titleText,
+            style: TextStyle(
+              color: isActive
+                  ? controller.isDarkMode.value
+                      ? AllMaterial.colorWhite
+                      : AllMaterial.colorWhite
+                  : Colors.grey,
+              fontSize: 14,
+              fontWeight: AllMaterial.fontBold,
+            ),
           ),
         ),
       ],

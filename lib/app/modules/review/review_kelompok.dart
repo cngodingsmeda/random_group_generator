@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,10 +18,11 @@ class ReviewKelompokView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(GenerateKelompokController());
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: controller.isDarkMode.value ? Colors.black.withOpacity(0.95) : Colors.white,
+        surfaceTintColor: controller.isDarkMode.value ? Colors.black.withOpacity(0.95) : Colors.white,
         title: Text(
           '$title $kelas',
           style: const TextStyle(fontWeight: AllMaterial.fontSemiBold),
@@ -35,7 +37,7 @@ class ReviewKelompokView extends StatelessWidget {
           )
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: controller.isDarkMode.value ? Colors.black.withOpacity(0.95) : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -83,7 +85,7 @@ class ReviewKelompokView extends StatelessWidget {
                             Text(
                               "Kelompok ${index + 1}:",
                               style: const TextStyle(
-                                color: AllMaterial.colorBlackPrimary,
+                                // color: AllMaterial.colorBlackPrimary,
                                 fontWeight: AllMaterial.fontBlack,
                                 fontSize: 16,
                               ),
@@ -93,7 +95,7 @@ class ReviewKelompokView extends StatelessWidget {
                               itemNamedCharacter,
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: AllMaterial.colorGreyPrimary,
+                                // color: AllMaterial.colorGreyPrimary,
                               ),
                             ),
                           ],

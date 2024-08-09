@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:random_group_generator/app/routes/app_pages.dart';
 import 'package:random_group_generator/constants/all_material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,7 +18,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -45,7 +46,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: AllMaterial.fontExtraBold,
-                                          color: AllMaterial.colorBlackPrimary,
+                                          // color: AllMaterial.colorBlackPrimary,
                                         ),
                                       ),
                                     ),
@@ -104,12 +105,13 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     Obx(() => Text(
                                           _getTitle(
                                               controller.currentStep.value),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 16,
                                             fontWeight:
                                                 AllMaterial.fontExtraBold,
-                                            color:
-                                                AllMaterial.colorBlackPrimary,
+                                            color: controller.isDarkMode.value
+                                                ? AllMaterial.colorWhite
+                                                : AllMaterial.colorBlackPrimary,
                                           ),
                                         )),
                                     Obx(
@@ -206,7 +208,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                               () => Text(
                                 _getSubTitle(controller.currentStep.value),
                                 style: const TextStyle(
-                                  color: AllMaterial.colorBlackPrimary,
+                                  // color: AllMaterial.colorBlackPrimary,
                                   fontSize: 16,
                                   fontWeight: AllMaterial.fontBlack,
                                 ),
@@ -217,8 +219,8 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                             () => Text(
                               _getTitleSub(controller.currentStep.value),
                               style: const TextStyle(
-                                color: AllMaterial.colorGreyPrimary,
-                              ),
+                                  // color: AllMaterial.colorGreyPrimary,
+                                  ),
                             ),
                           ),
 
@@ -235,7 +237,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                       return Container(
                         width: Get.width,
                         height: Get.height * 0.17,
-                        color: const Color.fromARGB(11, 255, 255, 255),
+                        // color: const Color.fromARGB(11, 255, 255, 255),
                         alignment: Alignment.bottomCenter,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -257,7 +259,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                   "Gunakan filter default",
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: AllMaterial.colorBlackPrimary,
+                                    // color: AllMaterial.colorBlackPrimary,
                                     fontWeight: AllMaterial.fontMedium,
                                   ),
                                 ),
@@ -265,7 +267,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                   "(matikan ceklis untuk mengatur filter)",
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: AllMaterial.colorGreyPrimary,
+                                    // color: AllMaterial.colorGreyPrimary,
                                   ),
                                 ),
                                 controlAffinity:
@@ -373,11 +375,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                             backgroundColor: AllMaterial.colorBluePrimary,
                           ),
                           onPressed: () {
-                            controller.addToHistory(
-                              controller.titleKelompok.value,
-                              controller.selectedKelas.value,
-                              controller.kelompokList,
-                            );
+                            Get.offAllNamed(Routes.HOME);
                           },
                           child: const Text(
                             "Selesai",
@@ -415,7 +413,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                 builder: (context) {
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: AllMaterial.colorWhite,
+                                      color: controller.isDarkMode.value ? Colors.black : AllMaterial.colorWhite,
                                       borderRadius: BorderRadius.circular(25),
                                     ),
                                     width: Get.width,
@@ -597,7 +595,7 @@ class ReviewPage extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.black,
+                  // color: Colors.black,
                 ),
               ),
             ),
@@ -617,7 +615,7 @@ class ReviewPage extends StatelessWidget {
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: Colors.black,
+                            // color: Colors.black,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -727,14 +725,14 @@ class _FilterPageState extends State<FilterPage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff6C6C6C),
+                                    // color: Color(0xff6C6C6C),
                                   ),
                                 ),
                                 Text(
                                   "(untuk kebutuhan Kelompok Agama)",
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Color(0xffB0B0B0),
+                                    // color: Color(0xffB0B0B0),
                                   ),
                                 ),
                               ],
@@ -774,8 +772,11 @@ class _FilterPageState extends State<FilterPage> {
                                       }
                                     : null,
                             selectedColor: AllMaterial.colorBluePrimary,
-                            disabledColor: AllMaterial.colorWhite,
-                            backgroundColor: AllMaterial.colorBlueSec,
+                            disabledColor:
+                                AllMaterial.colorWhite.withOpacity(0.1),
+                            backgroundColor: widget.controller.isDarkMode.value
+                                ? AllMaterial.colorGreyPrimary.withOpacity(0.4)
+                                : AllMaterial.colorBlueSec,
                           );
                         }).toList(),
                       );
@@ -824,7 +825,7 @@ class _FilterPageState extends State<FilterPage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff6C6C6C),
+                                    // color: Color(0xff6C6C6C),
                                   ),
                                 ),
                                 Text(
@@ -843,9 +844,11 @@ class _FilterPageState extends State<FilterPage> {
                     const SizedBox(height: 24),
                     InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () {
-                        widget.controller.toggleJK("Laki-Laki");
-                      },
+                      onTap: widget.controller.filterJKActive.value
+                          ? () {
+                              widget.controller.toggleJK("Laki-Laki");
+                            }
+                          : null,
                       child: Obx(
                         () => Container(
                           padding: const EdgeInsets.all(16),
@@ -854,7 +857,7 @@ class _FilterPageState extends State<FilterPage> {
                           height: 50,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color(0xffD4D6DD),
+                              color:  widget.controller.isDarkMode.value ? Colors.transparent : const Color(0xffD4D6DD),
                               width:
                                   widget.controller.jKSiswa.value == "Laki-Laki"
                                       ? 0
@@ -863,7 +866,7 @@ class _FilterPageState extends State<FilterPage> {
                             color:
                                 widget.controller.jKSiswa.value == "Laki-Laki"
                                     ? AllMaterial.colorBluePrimary
-                                    : Colors.white,
+                                    : widget.controller.isDarkMode.value ? AllMaterial.colorGreyPrimary.withOpacity(0.4) : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -872,7 +875,7 @@ class _FilterPageState extends State<FilterPage> {
                               color:
                                   widget.controller.jKSiswa.value == "Laki-Laki"
                                       ? AllMaterial.colorWhite
-                                      : AllMaterial.colorBlackPrimary,
+                                      : widget.controller.isDarkMode.value ? AllMaterial.colorGreyPrimary.withOpacity(0.4) : AllMaterial.colorBlackPrimary,
                             ),
                           ),
                         ),
@@ -881,9 +884,11 @@ class _FilterPageState extends State<FilterPage> {
                     const SizedBox(height: 8),
                     InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () {
-                        widget.controller.toggleJK("Perempuan");
-                      },
+                      onTap: widget.controller.filterJKActive.value
+                          ? () {
+                              widget.controller.toggleJK("Perempuan");
+                            }
+                          : null,
                       child: Obx(
                         () => Container(
                           padding: const EdgeInsets.all(16),
@@ -892,7 +897,7 @@ class _FilterPageState extends State<FilterPage> {
                           height: 50,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color(0xffD4D6DD),
+                              color:  widget.controller.isDarkMode.value ? Colors.transparent : const Color(0xffD4D6DD),
                               width:
                                   widget.controller.jKSiswa.value == "Perempuan"
                                       ? 0
@@ -902,7 +907,7 @@ class _FilterPageState extends State<FilterPage> {
                             color:
                                 widget.controller.jKSiswa.value == "Perempuan"
                                     ? AllMaterial.colorBluePrimary
-                                    : Colors.white,
+                                    : widget.controller.isDarkMode.value ? AllMaterial.colorGreyPrimary.withOpacity(0.4) : Colors.transparent,
                           ),
                           child: Text(
                             "Perempuan",
@@ -910,7 +915,7 @@ class _FilterPageState extends State<FilterPage> {
                               color:
                                   widget.controller.jKSiswa.value == "Perempuan"
                                       ? AllMaterial.colorWhite
-                                      : AllMaterial.colorBlackPrimary,
+                                      : widget.controller.isDarkMode.value ? AllMaterial.colorGreyPrimary.withOpacity(0.4) : AllMaterial.colorBlackPrimary,
                             ),
                           ),
                         ),
@@ -956,7 +961,7 @@ class PilihKelas extends StatelessWidget {
             "Mata Pelajaran",
             style: TextStyle(
               fontSize: 13,
-              color: AllMaterial.colorGreyPrimary,
+              // color: AllMaterial.colorGreyPrimary,
               fontWeight: AllMaterial.fontBold,
             ),
           ),
@@ -993,7 +998,7 @@ class PilihKelas extends StatelessWidget {
             "Pilih Kelas",
             style: TextStyle(
               fontSize: 13,
-              color: AllMaterial.colorGreyPrimary,
+              // color: AllMaterial.colorGreyPrimary,
               fontWeight: AllMaterial.fontBold,
             ),
           ),
@@ -1019,7 +1024,9 @@ class PilihKelas extends StatelessWidget {
                     controller.toggleSelection(kelas);
                   },
                   selectedColor: AllMaterial.colorBluePrimary,
-                  backgroundColor: AllMaterial.colorBlueSec,
+                  backgroundColor: controller.isDarkMode.value
+                      ? AllMaterial.colorGreyPrimary.withOpacity(0.4)
+                      : AllMaterial.colorBlueSec,
                 );
               }).toList(),
             );
@@ -1046,6 +1053,7 @@ class StepperWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(GenerateKelompokController());
     return Column(
       children: [
         CircleAvatar(
@@ -1069,7 +1077,13 @@ class StepperWidget extends StatelessWidget {
         Text(
           titleText,
           style: TextStyle(
-            color: isActive ? AllMaterial.colorBlackPrimary : Colors.grey,
+            color: isActive
+                ? controller.isDarkMode.value
+                    ? AllMaterial.colorWhite
+                    : AllMaterial.colorBlackPrimary
+                : controller.isDarkMode.value
+                    ? AllMaterial.colorGreyPrimary
+                    : Colors.grey,
             fontSize: 14,
             fontWeight: AllMaterial.fontBold,
           ),
@@ -1104,7 +1118,7 @@ class GeneratePage extends StatelessWidget {
             "Jumlah Kelompok ",
             style: TextStyle(
               fontSize: 13,
-              color: AllMaterial.colorGreyPrimary,
+              // color: AllMaterial.colorGreyPrimary,
               fontWeight: AllMaterial.fontBold,
             ),
           ),
@@ -1136,9 +1150,9 @@ class GeneratePage extends StatelessWidget {
           ),
           const SizedBox(height: 25),
           const Text(
-            "*Jumlah anggota kelompok dibagi merata berdasarkan jumlah kelompok",
+            "*Saran pembagian kelompok (banyak siswa 36): \nJumlah Kelompok: 8 = 5 kelompok ada 5 orang & 3 kelompok ada 4 orang \nJumlah Kelompok: 6 = setiap kelompok ada 6 orang \nJumlah Kelompok: 4 = setiap kelompok ada 9 orang",
             style: TextStyle(
-              color: AllMaterial.colorGreyPrimary,
+              // color: AllMaterial.colorGreyPrimary,
               fontSize: 12,
             ),
           ),

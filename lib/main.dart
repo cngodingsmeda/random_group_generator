@@ -13,20 +13,30 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     GetMaterialApp(
-      theme: ThemeData(
-        fontFamily: AllMaterial.fontFamily,
+      theme: ThemeData.light().copyWith(
         primaryColorLight: Colors.white,
+        textTheme: ThemeData.light().textTheme.apply(
+              fontFamily: AllMaterial.fontFamily,
+            ),
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        textTheme: ThemeData.dark().textTheme.apply(
+              fontFamily: AllMaterial.fontFamily,
+            ),
+      ),
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       title: "Generate Kelompok",
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 2)),
         builder: (context, snapshot) {
-          var controller = Get.put(GenerateKelompokController());
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SnapshotView();
           } else {
-            controller.loadHistory();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              var controller = Get.put(GenerateKelompokController());
+              controller.loadHistory();
+            });
             return const HomeView();
           }
         },
