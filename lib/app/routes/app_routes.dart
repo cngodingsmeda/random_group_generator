@@ -7,6 +7,8 @@ abstract class Routes {
   static const GENERATE_KELOMPOK = _Paths.GENERATE_KELOMPOK;
   static const REVIEW = _Paths.REVIEW;
   static const REVIEW_KELOMPOK = _Paths.REVIEW_KELOMPOK;
+  static const LOGIN = _Paths.LOGIN;
+  static const ROLE = _Paths.ROLE;
 }
 
 abstract class _Paths {
@@ -15,4 +17,6 @@ abstract class _Paths {
   static const GENERATE_KELOMPOK = '/generate-kelompok';
   static const REVIEW = '/review';
   static const REVIEW_KELOMPOK = '/review-kelompok';
+  static const LOGIN = '/login';
+  static const ROLE = '/role';
 }

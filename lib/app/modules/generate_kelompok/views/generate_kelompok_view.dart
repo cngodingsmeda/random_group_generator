@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:random_group_generator/all_material.dart';
-import 'package:random_group_generator/app/routes/app_pages.dart';
+import 'package:random_group_generator/app/modules/home/views/home_view.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../controllers/generate_kelompok_controller.dart';
-
+final isDarkMode = AllMaterial.box.read("isDarkMode") ?? false;
 class GenerateKelompokView extends GetView<GenerateKelompokController> {
   const GenerateKelompokView({super.key});
 
@@ -17,6 +17,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
   Widget build(BuildContext context) {
     var controller = Get.put(GenerateKelompokController());
     var scrollController = Get.put(ScrollController());
+    
     return Scaffold(
       body: Center(
         heightFactor: 1,
@@ -135,7 +136,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                                     children: [
                                       StepperWidget(
                                         number: "1",
-                                        titleText: "Pilih Kelas",
+                                        titleText: "Tambah Anggota",
                                         isActive:
                                             controller.currentStep.value >= 1,
                                         isCompleted:
@@ -343,7 +344,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                               backgroundColor: AllMaterial.colorBluePrimary,
                             ),
                             onPressed: () {
-                              Get.offAllNamed(Routes.HOME);
+                              Get.offAll(() => const HomeView());
                             },
                             child: const Text(
                               "Selesai",
@@ -369,16 +370,25 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
                               backgroundColor: AllMaterial.colorBluePrimary,
                             ),
                             onPressed: () {
-                              if (controller.currentStep.value < 5 &&
-                                  controller.selectedKelas.value != "") {
+                              if (controller.currentStep.value == 1) {
+                                controller.prosesInputSiswa();
+                                if (controller.selectedKelas.value
+                                        .trim()
+                                        .isEmpty ||
+                                    controller.anggotaKelas.isEmpty) {
+                                  AllMaterial.messageScaffold(
+                                      title:
+                                          "Harap isi nama kelompok dan daftar anggota!");
+                                  return;
+                                }
+                              }
+
+                              if (controller.currentStep.value < 5) {
                                 controller.setCurrentStep(
                                   controller.currentStep.value + 1,
                                 );
                                 controller.setTitle();
                                 controller.setTugas();
-                              } else {
-                                AllMaterial.messageScaffold(
-                                    title: "Harap pilih kelas Anda!");
                               }
                             },
                             child: const Text(
@@ -405,7 +415,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
   String _getTitle(int step) {
     switch (step) {
       case 1:
-        return "Pilih Kelas";
+        return "Tambah Anggota";
       case 2:
         return "Atur Tugas";
       case 3:
@@ -422,7 +432,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
   String _getSubTitle(int step) {
     switch (step) {
       case 1:
-        return "Tentukan kelas Anda!";
+        return "Tambahkan anggota kelompok!";
       case 2:
         return "Sesuaikan dengan kebutuhan!";
       case 3:
@@ -439,7 +449,7 @@ class GenerateKelompokView extends GetView<GenerateKelompokController> {
   String _getTitleSub(int step) {
     switch (step) {
       case 1:
-        return "Pilih sesuai kebutuhan";
+        return "Tambahkan daftar anggota kelompok Anda";
       case 2:
         return "Jangan lupa untuk mengatur tugas";
       case 3:
@@ -654,7 +664,7 @@ class ReviewPage extends StatelessWidget {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               border:
-                                  Border.all(color: const Color(0xffD4D6DD)),
+                                  Border.all(color: isDarkMode ? Color.fromARGB(255, 34, 34, 34) : Colors.grey.shade300),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
@@ -713,11 +723,14 @@ class ReviewPage extends StatelessWidget {
     final tanggalPresentasi = controller.presentasi.value;
     final tanggalDeadline = controller.deadline.value;
     final lampiranURL = controller.urlC.text;
+    final materiKelas = controller.titleC.text;
 
     final now = DateTime.now();
     final formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(now);
 
-    String message = isToWa ? "*$title $kelas*\n\n" : "$title $kelas\n\n";
+    String message = isToWa
+        ? "*$title $kelas $materiKelas*\n\n"
+        : "$title $kelas $materiKelas\n\n";
 
     for (int i = 0; i < controller.kelompokList.length; i++) {
       final group = controller.kelompokList[i];
@@ -787,7 +800,7 @@ class _FilterPageState extends State<FilterPage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xffD4D6DD),
+          color: isDarkMode ? Color.fromARGB(255, 34, 34, 34) : Colors.grey.shade300,
           width: 1,
         ),
       ),
@@ -816,12 +829,12 @@ class _FilterPageState extends State<FilterPage> {
               ],
               focusNode: controller.focusNodeJ,
               cursorColor: AllMaterial.colorBluePrimary,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: "6",
                 contentPadding: EdgeInsets.symmetric(horizontal: 15),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: AllMaterial.colorGreySec,
+                    color: isDarkMode ? Color.fromARGB(255, 34, 34, 34) : AllMaterial.colorGreySec,
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
@@ -878,83 +891,66 @@ class PilihKelas extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xffD4D6DD),
+          color: isDarkMode ?  Color.fromARGB(255, 34, 34, 34) : Colors.grey.shade300,
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Obx(() {
-                final kelasList = controller.namaKelas;
-
-                final kelasX = kelasList
-                    .where((k) => RegExp(r'^X(?!I)').hasMatch(k))
-                    .toList();
-                final kelasXI = kelasList
-                    .where((k) => RegExp(r'^XI(?!I)').hasMatch(k))
-                    .toList();
-                final kelasXII = kelasList
-                    .where((k) => RegExp(r'^XII').hasMatch(k))
-                    .toList();
-
-                Widget buildGroup(String title, List<String> kelasGroup) {
-                  if (kelasGroup.isEmpty) return const SizedBox.shrink();
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: kelasGroup.map((kelas) {
-                          return ChoiceChip(
-                            label: Text(
-                              kelas,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  color: AllMaterial.colorWhite),
-                            ),
-                            checkmarkColor: AllMaterial.colorWhite,
-                            elevation: 0,
-                            side: const BorderSide(
-                                width: 0, color: Colors.transparent),
-                            selected: controller.selectedKelas.value == kelas,
-                            onSelected: (_) =>
-                                controller.toggleSelection(kelas),
-                            selectedColor: AllMaterial.colorBluePrimary,
-                            backgroundColor: controller.isDarkMode.value
-                                ? AllMaterial.colorGreyPrimary.withOpacity(0.4)
-                                : AllMaterial.colorBlueSec,
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  );
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildGroup("Kelas X", kelasX),
-                    buildGroup("Kelas XI", kelasXI),
-                    buildGroup("Kelas XII", kelasXII),
-                  ],
-                );
-              });
-            },
+          const Text("Nama Kelas / Kelompok",
+              style: TextStyle(fontSize: 13, fontWeight: AllMaterial.fontBold)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller.namaKelasC,
+            cursorColor: AllMaterial.colorBluePrimary,
+            decoration: InputDecoration(
+              labelText: "Contoh: XI RPL 1",
+              alignLabelWithHint: true,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+              enabledBorder: OutlineInputBorder(
+                borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorGreySec),
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorBluePrimary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 25),
+          const Text(
+            "Daftar Anggota / Siswa",
+            style: TextStyle(fontSize: 13, fontWeight: AllMaterial.fontBold),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller.daftarSiswaC,
+            maxLines: 10,
+            cursorColor: AllMaterial.colorBluePrimary,
+            decoration: InputDecoration(
+              labelText:
+                  "Masukkan daftar nama, pisahkan dengan baris baru (Enter).",
+              alignLabelWithHint: true,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+              enabledBorder: OutlineInputBorder(
+                borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorBluePrimary),
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: AllMaterial.colorBluePrimary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "*Anda bisa menyalin daftar nama dari Excel atau WhatsApp dan menempelkannya di sini.",
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),
@@ -1060,7 +1056,7 @@ class ManajemenTugas extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xffD4D6DD),
+            color:  isDarkMode ?  Color.fromARGB(255, 34, 34, 34) :Colors.grey.shade300,
             width: 1,
           ),
         ),
@@ -1077,14 +1073,14 @@ class ManajemenTugas extends StatelessWidget {
               focusNode: controller.focusNodeC,
               cursorColor: AllMaterial.colorBluePrimary,
               onTapOutside: (_) => controller.focusNodeC.unfocus(),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "PPKN",
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15, vertical: 16),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AllMaterial.colorGreySec),
+                  borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorGreySec),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -1105,14 +1101,14 @@ class ManajemenTugas extends StatelessWidget {
               focusNode: controller.focusNodeP,
               onTapOutside: (_) => controller.focusNodeP.unfocus(),
               cursorColor: AllMaterial.colorBluePrimary,
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 labelText: "KD 3.2 atau BAB 3",
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15, vertical: 16),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AllMaterial.colorGreySec),
+                  borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorBluePrimary),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -1135,14 +1131,14 @@ class ManajemenTugas extends StatelessWidget {
               onTapOutside: (_) => controller.focusNodeT.unfocus(),
               maxLines: 3,
               cursorColor: AllMaterial.colorBluePrimary,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Membuat Projek",
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15, vertical: 16),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AllMaterial.colorGreySec),
+                  borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorGreySec),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -1170,7 +1166,8 @@ class ManajemenTugas extends StatelessWidget {
                     controller.isRole.value = val;
                     controller.isRoleAuto.value = true;
                   },
-                  activeColor: AllMaterial.colorBluePrimary.withOpacity(0.4),
+                  activeThumbColor:
+                      AllMaterial.colorBluePrimary.withValues(alpha: 0.4),
                   thumbColor: const WidgetStatePropertyAll(Colors.white),
                 ),
                 onTap: () {
@@ -1201,8 +1198,8 @@ class ManajemenTugas extends StatelessWidget {
                               value: controller.isRoleAuto.value,
                               onChanged: (val) =>
                                   controller.isRoleAuto.value = val,
-                              activeColor:
-                                  AllMaterial.colorBluePrimary.withOpacity(0.4),
+                              activeThumbColor: AllMaterial.colorBluePrimary
+                                  .withValues(alpha: 0.4),
                               thumbColor:
                                   const WidgetStatePropertyAll(Colors.white),
                             ),
@@ -1333,14 +1330,14 @@ class ManajemenTugas extends StatelessWidget {
               focusNode: controller.focusNodeU,
               cursorColor: AllMaterial.colorBluePrimary,
               onTapOutside: (_) => controller.focusNodeU.unfocus(),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "https://contoh.com/tugas",
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15, vertical: 16),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AllMaterial.colorGreySec),
+                  borderSide: isDarkMode ? const BorderSide(color: Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorGreySec),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -1407,7 +1404,7 @@ class MateriChipInput extends StatelessWidget {
             floatingLabelBehavior: FloatingLabelBehavior.never,
             contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AllMaterial.colorGreySec),
+              borderSide: isDarkMode ? const BorderSide(color:  Color.fromARGB(255, 34, 34, 34)) : const BorderSide(color: AllMaterial.colorBluePrimary),
               borderRadius: BorderRadius.all(Radius.circular(12)),
             ),
             focusedBorder: OutlineInputBorder(
@@ -1532,7 +1529,7 @@ class GeneratePage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xffD4D6DD),
+            color: isDarkMode ? Color.fromARGB(255, 34, 34, 34) : Colors.grey.shade300,
             width: 1,
           ),
         ),
@@ -1577,7 +1574,8 @@ class GeneratePage extends StatelessWidget {
                           },
                           selectedColor: AllMaterial.colorBluePrimary,
                           backgroundColor: controller.isDarkMode.value
-                              ? AllMaterial.colorGreyPrimary.withOpacity(0.4)
+                              ? AllMaterial.colorGreyPrimary
+                                  .withValues(alpha: 0.4)
                               : AllMaterial.colorBlueSec,
                         ),
                       );

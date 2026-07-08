@@ -74,8 +74,6 @@ flutter_launcher_icons:
     image_path: "assets/icons/Logo.png"
 flutter:
   assets:
-  - assets/json/23/
-  - assets/json/24/
   - assets/images/
   - assets/
   fonts:

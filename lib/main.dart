@@ -1,35 +1,67 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:random_group_generator/all_material.dart';
+
 import 'package:random_group_generator/app/modules/generate_kelompok/controllers/generate_kelompok_controller.dart';
 import 'package:random_group_generator/app/modules/home/views/home_view.dart';
+import 'package:random_group_generator/app/modules/login/views/login_view.dart';
+import 'package:random_group_generator/app_scroll.dart';
 import 'package:random_group_generator/loading_splash_view.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:random_group_generator/window_helper_desktop.dart';
 
-import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('id', null);
+  await GetStorage.init();
+
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    var controller = Get.put(GenerateKelompokController());
+    final controller = Get.put(GenerateKelompokController());
     controller.loadHistory();
   });
-  await initializeDateFormatting('id', null);
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    await windowManager.ensureInitialized();
 
-    windowManager.waitUntilReadyToShow(AllMaterial.windowOptions, () async {
-      await windowManager.maximize();
-    });
+  if (kIsWeb) {
+    // Web
+  } else {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.windows:
+      case TargetPlatform.macOS:
+      case TargetPlatform.linux:
+        await initDesktopWindow();
+        break;
+
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
+        break;
+
+      default:
+        break;
+    }
   }
-  await GetStorage.init();
-  var isDarkMode = AllMaterial.box.read("isDarkMode") ?? false;
+
+  final isDarkMode = AllMaterial.box.read("isDarkMode") ?? false;
+
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Random Group Generator",
+      defaultTransition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 350),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: const NoAlwaysScrollableBehavior(),
+          child: child!,
+        );
+      },
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AllMaterial.colorWhite,
@@ -52,7 +84,7 @@ void main() async {
         dropdownMenuTheme: DropdownMenuThemeData(
           menuStyle: MenuStyle(
             backgroundColor: WidgetStatePropertyAll(AllMaterial.colorWhite),
-            surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+            surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
         ),
       ),
@@ -78,27 +110,24 @@ void main() async {
         dropdownMenuTheme: DropdownMenuThemeData(
           menuStyle: MenuStyle(
             backgroundColor: WidgetStatePropertyAll(Color(0xFF1E1E1E)),
-            surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+            surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
         ),
       ),
-      themeMode: isDarkMode == null
-          ? ThemeMode.system
-          : isDarkMode == true
-              ? ThemeMode.dark
-              : ThemeMode.light,
-      debugShowCheckedModeBanner: false,
-      title: "Random Group Generator",
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: LoadingSplashView(
         title: 'Tunggu sebentar!',
         animationAsset: 'assets/images/loading.json',
         onCompleted: () {
-          Get.offAll(
-            () => HomeView(),
-          );
+          final token = AllMaterial.box.read('token');
+          if (token != null && token.toString().isNotEmpty) {
+            Get.offAll(() => HomeView());
+          } else {
+            Get.offAll(()=> LoginView());
+          }
         },
       ),
-      getPages: AppPages.routes,
+      // getPages: AppPages.routes,
     ),
   );
 }

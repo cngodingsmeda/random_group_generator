@@ -43,7 +43,7 @@ abstract class AllMaterial {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[900]?.withOpacity(0.95),
+                  color: Colors.grey[900]?.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(

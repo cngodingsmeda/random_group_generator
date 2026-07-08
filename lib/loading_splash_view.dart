@@ -31,14 +31,14 @@ class LoadingSplashView extends StatelessWidget {
         top: -90,
         left: -90,
         size: 180,
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
       ),
       _DecorationShape(
         shape: ShapeType.circle,
         bottom: -110,
         right: -70,
         size: 220,
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
       ),
       // Boxes
       _DecorationShape(
@@ -46,14 +46,14 @@ class LoadingSplashView extends StatelessWidget {
         top: size.height * 0.3,
         left: -40,
         size: 120,
-        color: Colors.white.withOpacity(0.07),
+        color: Colors.white.withValues(alpha: 0.07),
       ),
       _DecorationShape(
         shape: ShapeType.box,
         bottom: 80,
         right: 50,
         size: 100,
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
       ),
       // Triangles
       _DecorationShape(
@@ -61,14 +61,14 @@ class LoadingSplashView extends StatelessWidget {
         top: 80,
         right: 70,
         size: 140,
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
       ),
       _DecorationShape(
         shape: ShapeType.triangle,
         bottom: 150,
         left: 30,
         size: 60,
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
       ),
     ];
 
@@ -150,9 +150,7 @@ class LoadingSplashView extends StatelessWidget {
           painter: _TrianglePainter(color: d.color),
         );
 
-      default:
-        return const SizedBox();
-    }
+      }
   }
 }
 

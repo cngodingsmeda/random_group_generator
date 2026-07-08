@@ -1,47 +1,15 @@
-import 'dart:convert';
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:random_group_generator/all_material.dart';
 
 class GenerateKelompokController extends GetxController {
-  var namaKelas = [
-    "XI RPL 1",
-    "XI RPL 2",
-    "XI TKJ 1",
-    "XI TKJ 2",
-    "XI TKJ 3",
-    "XI AKL 1",
-    "XI AKL 2",
-    "XI AKL 3",
-    "XI MPK 1",
-    "XI MPK 2",
-    "XI BDG 1",
-    "XI BDG 2",
-    "XI BRT 1",
-    "XI BRT 2",
-    "XI ULW 1",
-    "XI ULW 2",
-    "XII RPL 1",
-    "XII RPL 2",
-    "XII RPL 3",
-    "XII TKJ 1",
-    "XII TKJ 2",
-    "XII TKJ 3",
-    "XII AKL 1",
-    "XII AKL 2",
-    "XII MPK 1",
-    "XII MPK 2",
-    "XII BDG",
-    "XII BRT 1",
-    "XII BRT 2",
-    "XII ULW",
-    "XII LPS",
-  ].obs;
+  var namaKelasC = TextEditingController();
+  var daftarSiswaC = TextEditingController();
   var selectedKelas = ''.obs;
   var kelasTerpilih = <dynamic>[].obs;
   var jumlahSiswaTerpilih = <dynamic>[].obs;
@@ -51,59 +19,21 @@ class GenerateKelompokController extends GetxController {
   var jumlahKelompokSet = "";
   var jumlahAnggotaKelompokSet = "";
 
-  final Map<String, String> kelasJsonMap = {
-    "XI RPL 1": 'assets/json/24/rpl1.json',
-    "XI RPL 2": 'assets/json/24/rpl2.json',
-    "XI TKJ 1": 'assets/json/24/tkj1.json',
-    "XI TKJ 2": 'assets/json/24/tkj2.json',
-    "XI TKJ 3": 'assets/json/24/tkj3.json',
-    "XI AKL 1": 'assets/json/24/akl1.json',
-    "XI AKL 2": 'assets/json/24/akl2.json',
-    "XI AKL 3": 'assets/json/24/akl3.json',
-    "XI MPK 1": 'assets/json/24/mpk1.json',
-    "XI MPK 2": 'assets/json/24/mpk2.json',
-    "XI BDG 1": 'assets/json/24/bdg1.json',
-    "XI BDG 2": 'assets/json/24/bdg2.json',
-    "XI BRT 1": 'assets/json/24/brt1.json',
-    "XI BRT 2": 'assets/json/24/brt2.json',
-    "XI ULW 1": 'assets/json/24/ulw1.json',
-    "XI ULW 2": 'assets/json/24/ulw2.json',
-    "XII RPL 1": 'assets/json/23/rpl1.json',
-    "XII RPL 2": 'assets/json/23/rpl2.json',
-    "XII RPL 3": 'assets/json/23/rpl3.json',
-    "XII TKJ 1": 'assets/json/23/tkj1.json',
-    "XII TKJ 2": 'assets/json/23/tkj2.json',
-    "XII TKJ 3": 'assets/json/23/tkj3.json',
-    "XII AKL 1": 'assets/json/23/akl1.json',
-    "XII AKL 2": 'assets/json/23/akl2.json',
-    "XII MPK 1": 'assets/json/23/mpk1.json',
-    "XII MPK 2": 'assets/json/23/mpk2.json',
-    "XII BDG": 'assets/json/23/bdg.json',
-    "XII BRT 1": 'assets/json/23/brt1.json',
-    "XII BRT 2": 'assets/json/23/brt2.json',
-    "XII ULW": 'assets/json/23/ulw.json',
-    "XII LPS": 'assets/json/23/lps.json',
-  };
+  void prosesInputSiswa() {
+    selectedKelas.value = namaKelasC.text;
 
-  void kelasDipilih(String value) async {
-    if (kelasJsonMap.containsKey(value)) {
-      var data = await rootBundle.loadString(kelasJsonMap[value]!);
-      List<dynamic> jsonResult = jsonDecode(data);
+    anggotaKelas.clear();
+    kelasTerpilih.clear();
 
-      anggotaKelas.clear();
-
-      for (var i = 0; i < jsonResult.length; i++) {
-        if (jsonResult[i]["nama"] is String) {
-          anggotaKelas.add(jsonResult[i]["nama"]);
-        } else {
-          print("Data tidak valid: ${jsonResult[i]["nama"]}");
+    if (daftarSiswaC.text.trim().isNotEmpty) {
+      // Pisahkan berdasarkan baris (newline)
+      final lines = daftarSiswaC.text.split('\n');
+      for (var line in lines) {
+        if (line.trim().isNotEmpty) {
+          anggotaKelas.add(line.trim());
+          kelasTerpilih.add({'nama': line.trim()});
         }
       }
-
-      kelasTerpilih.assignAll(jsonResult..shuffle());
-    } else {
-      kelasTerpilih.clear();
-      anggotaKelas.clear();
     }
     update();
   }
@@ -122,17 +52,6 @@ class GenerateKelompokController extends GetxController {
             title: "Anda hanya dapat memilih $jumlahKetua ketua.");
       }
     }
-  }
-
-  void toggleSelection(String value) {
-    if (selectedKelas.value == value) {
-      selectedKelas.value = '';
-      kelasTerpilih.clear();
-    } else {
-      selectedKelas.value = value;
-      kelasDipilih(value);
-    }
-    update();
   }
 
   void jumlahSiswa() {
@@ -398,7 +317,8 @@ class GenerateKelompokController extends GetxController {
     jumlahKelompok.clear();
     jumlahAnggotaKelompok.clear();
     selectedKelas.value = "";
-    kelasDipilih("Clear");
+    namaKelasC.clear();
+    daftarSiswaC.clear();
     jumlahSiswaTerpilih.clear();
     titleKelompok.value = 'KELOMPOK';
     materiInputC.text = '';

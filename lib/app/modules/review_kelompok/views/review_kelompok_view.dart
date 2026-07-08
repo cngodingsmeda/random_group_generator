@@ -3,6 +3,8 @@ import 'package:random_group_generator/all_material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+final isDarkMode = AllMaterial.box.read("isDarkMode") ?? false;
+
 class ReviewKelompokView extends StatelessWidget {
   final String title;
   final String kelas;
@@ -108,7 +110,7 @@ class ReviewKelompokView extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                      color: const Color(0xffD4D6DD)),
+                                      color: isDarkMode ? Color.fromARGB(255, 34, 34, 34) : Colors.grey.shade300),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
